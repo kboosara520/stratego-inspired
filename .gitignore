@@ -1,2 +1,4 @@
 *.o
 raiinet
+*.pdf
+*.vscode
