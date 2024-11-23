@@ -5,10 +5,9 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "board.h"
 #include "constants.h"
 #include "player.h"
-
-class Board; // remove this
 
 class GameController {
     std::vector<std::unique_ptr<Player>> players;

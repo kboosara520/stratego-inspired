@@ -5,8 +5,7 @@
 #include <memory>
 #include <utility>
 #include "constants.h"
-
-class Link; // remove this
+#include "link.h"
 
 class Player {
     std::vector<std::unique_ptr<Link>> links;
