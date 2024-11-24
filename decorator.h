@@ -8,7 +8,7 @@ class Decorator: public Tile {
     protected:
         std::unique_ptr<Tile> next; // building layers on the tile
         Decorator(std::unique_ptr<Tile> other);
-        void updateLink(); // recursively updates all the links
+        void updateLink(Link * other) override; // recursively updates all the links
 };
 
 #endif  

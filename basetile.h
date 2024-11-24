@@ -8,6 +8,7 @@ class BaseTile: public Tile {
         BaseTile(Link * l = nullptr);
         void activate() override;
         char charAt() override;
+        void updateLink(Link * other) override;
 };
 
 #endif

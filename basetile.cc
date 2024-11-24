@@ -1,9 +1,11 @@
 #include "basetile.h"
-#include "link.h"
 
 BaseTile::BaseTile(Link * l): Tile{l}{}
 void BaseTile::activate() {
     return;
+}
+void BaseTile::updateLink(Link * other) {
+    l = other;
 }
 char BaseTile::charAt() {
     if (l == nullptr) {
