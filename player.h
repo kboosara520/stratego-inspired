@@ -34,6 +34,8 @@ class Player {
     void setData(int n);
     int getVirus();
     void setVirus(int n);
+    bool wins();
+    bool loses();
 };
 
 #endif

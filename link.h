@@ -7,6 +7,7 @@ class Link {
     int strength;
     int movement;
     int owner; // uses players index in GameController
+    
     bool isVisible;
     bool isDead;
     bool isTrojan;

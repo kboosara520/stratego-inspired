@@ -61,4 +61,8 @@ void Player::setData(int n) { data = n; }
 
 int Player::getVirus() { return virus; }
 
-void  Player::setVirus(int n) { virus = n; }
+void Player::setVirus(int n) { virus = n; }
+
+bool Player::wins() { return data >= WINCONDITION; }
+
+bool Player::loses() { return virus >= WINCONDITION; }
