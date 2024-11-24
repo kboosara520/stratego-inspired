@@ -2,3 +2,5 @@
 raiinet
 *.pdf
 *.vscode
+tmp*
+a.out

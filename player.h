@@ -1,8 +1,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <vector>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
 #include <memory>
+#include <vector>
+#include <random>
 #include <utility>
 #include "constants.h"
 #include "link.h"

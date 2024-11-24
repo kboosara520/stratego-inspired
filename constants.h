@@ -19,5 +19,7 @@ const std::unordered_map<char, std::string> CHAR2NAME{
     {'A', "And one"}
 };
 const std::vector<char> LINKNAMES{'a', 'A'};
+const char DATA = 'D';
+const char VIRUS = 'V';
 
 #endif
