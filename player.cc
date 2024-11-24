@@ -71,9 +71,11 @@ void Player::checkLoss() {
 
 bool Player::isActive() const { return active; }
 
-const std::vector<std::pair<char, bool>> &Player::getAbilities() const {
-    return abilities;
-}
+const std::vector<std::pair<char, bool>> &Player::getAbilities() const { return abilities; }
+
+bool Player::ownsLink(char name) const { return links.count(name) > 0; }
+
+bool Player::linkIsDead(char name) const { return links.at(name)->getIsDead(); }
 
 std::ostream &operator<<(std::ostream &out, const std::vector<std::pair<char, bool>> &abilities) {
   for (int i = 0; i < abilities.size(); ++i) {

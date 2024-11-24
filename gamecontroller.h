@@ -9,6 +9,12 @@
 #include "board.h"
 #include "constants.h"
 #include "player.h"
+#include "illegalmoveexception.h"
+
+struct Move {
+    char name;
+    char dir;
+};
 
 class GameController {
     std::istream *in;
@@ -18,6 +24,7 @@ class GameController {
     std::unique_ptr<Board> board;
     int turn = 0;
     int findWinner();
+    Move getMove();
   public:
     GameController(
       std::vector<std::string> playerAbilities, 

@@ -37,8 +37,9 @@ class Player {
     void setVirus(int n);
     bool wins() const;
     void checkLoss();
-    int getTurn() const;
     bool isActive() const;
+    bool ownsKey(char name) const;
+    bool linkIsDead(char name) const;
     const std::vector<std::pair<char, bool>> &getAbilities() const;
 };
 

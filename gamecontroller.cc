@@ -26,13 +26,35 @@ int GameController::findWinner() {
     return -1;
 }
 
+Move GameController::getMove() {
+    char name;
+    char dir;
+    *in >> name >> dir;
+    if (!players[turn]->ownsLink(name)) {
+        throw IllegalMoveException{"The player does not own the link"};
+    }
+    if (players[turn]->linkIsDead(name)) {
+        throw IllegalMoveException{"The Link is dead"};
+    }
+    return {name, dir};
+}
+
 void GameController::runGame() {
     std::string command;
     bool winnerFound = false;
     int winner = -1;
     while(*in >> command) {
         if (command == "move") {
-            // check if link is dead
+            while (true) {
+                try {
+                    Move move = getMove();
+                    board->move(move.dir, move.name);
+                } catch (IllegalMoveException e) {
+                    out << e.what() << std::endl;
+                    continue;
+                }
+                break;
+            }
             turn = (turn + 1) % PLAYERCOUNT; // updates whose turn it is
             winner = findWinner();
             if (winner >= 0) break;
