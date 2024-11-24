@@ -75,16 +75,33 @@ char Board::getState(int row, int col ) const{
     return board[row][col]->charAt(); 
 }
 // ok so link 1 shall always be the aggressor 
-bool Board::fight(Link * link1, Link * link2){
+Link* Board::fight(Link * link1, Link * link2){
     // Can't fight own link, need to test whether it's the same link, so
-    
-    
+    int x = 0; 
+    int y = 0; 
+    for (int i = 0; i < BOARDSIZE; ++i){
+        for (int j = 0; j < BOARDSIZE; ++j){
+                 // find the bloody link
+            if (board[i][j]->getLink() == link2){
+                board[i][j]->setLink(link1); 
+                board[i][j]->activate(); 
 
-
-    // So I'll need to check the strength of the link, and if 
-    // throw 
+                if (board[i][j]->getLink() == nullptr){
+                    board[i][j]->setLink(link2);
+                    return link2; 
+                }
+            }  
+        }
+    }
+    auto win = link1->getStrength() <=> link2->getStrength(); 
+    if (win >= 0){
+        return link1; 
+    } 
+    return link2; 
 
 }
+
+
 void check_valid_move(char dir, char link_name){
         // 1. find the position of the link based on the name 
     std::pair op = link_map[link_name]; 

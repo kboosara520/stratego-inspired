@@ -5,6 +5,7 @@
 #include <utility>
 #include <memory> 
 #include <vector>
+#include <compare>
 #include "illegalmoveexception.h"
 #include "subject.h"
 #include "player.h"
@@ -36,7 +37,7 @@ class Board: public Subject{
 
   char getState(int row, int col ) const override;
 
-  Link fight(Link * link1, Link * link2); 
+  Link * fight(Link * link1, Link * link2); 
   void move(char dir, char link_name); 
   void make_firewall(int i, int j); 
   void make_super_firewall(int i, int j); 
