@@ -1,5 +1,7 @@
 #ifndef DECORATOR_H
 #define DECORATOR_H
+
+#include <memory>
 #include "tile.h"
 
 class Decorator: public Tile {
