@@ -85,14 +85,12 @@ bool Board::fight(Link * link1, Link * link2){
     // throw 
 
 }
-
-
-void Board::move(char dir, char link_name){
-    // 1. find the position of the link based on the name 
-    std::pair p = link_map[link_name]; 
-    int move_dist = board[p.first][p.second]->getLink()->getMovement();
-    int owner = board[p.first][p.second]->getLink()->getOwner(); 
-
+void check_valid_move(char dir, char link_name){
+        // 1. find the position of the link based on the name 
+    std::pair op = link_map[link_name]; 
+    int move_dist = board[op.first][op.second]->getLink()->getMovement();
+    int owner = board[op.first][op.second]->getLink()->getOwner(); 
+    std::pair p{0,0}; 
     switch(dir){
         case UP:
             p = std::make_pair(p.first, p.second - move_dist); break; 
@@ -129,12 +127,27 @@ void Board::move(char dir, char link_name){
             }
             break;
     }
+}
+
+void Board::move(char dir, char link_name){
+
+    std::pair op = link_map[link_name]; 
+    int move_dist = board[op.first][op.second]->getLink()->getMovement();
+    int owner = board[op.first][op.second]->getLink()->getOwner(); 
+    std::pair p{0,0}; 
+
+    // check if the next move will cause it to download the link (currently will download anything lolololol)
+    if (p.first < 0 || p.first > 7){
+        download(owner, board[op.first][op.second]->getLink()); 
+        update(owner, board[op.first][op.second]->getLink()); 
+    }
+
 
     // check if the link exists
         // check if it's not a nullptrs
-    Link * next = board[p.first][p.second]->getLink(); 
+    Link * next = board[op.first][op.second]->getLink(); 
 
-    if (!next && owner == board[p.first][p.second]->getLink()->getOwner()){
+    if (!next && owner == board[op.first][op.second]->getLink()->getOwner()){
         ++owner; 
         string message = "Player " + owner;
         message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
@@ -147,10 +160,8 @@ void Board::move(char dir, char link_name){
     // not sure how to check if it's a firewall or a superfireall
 
     if (next){
-        fight( ,next); 
+        fight(board[p.first][p.second]->getLink(),next); // should update the thing accordingly. 
     }
-    // check if the next move will cause it to disappear off the screen 
-
 
 }
 

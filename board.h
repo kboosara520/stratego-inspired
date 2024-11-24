@@ -41,6 +41,8 @@ class Board: public Subject{
   void make_firewall(int i, int j); 
   void make_super_firewall(int i, int j); 
   void display(int turn); // notifyall
+  void download(int player, Link * link); 
+  void update(int player, Link * link); 
 
 };
 
