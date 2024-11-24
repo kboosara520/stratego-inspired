@@ -22,6 +22,6 @@ int main(int argc, char* argv[]) {
         // add extra features
     }
 
-    GameController gc{playerAbilities, linkFiles, std::cin, std::cout};
+    GameController gc{playerAbilities, linkFiles};
     gc.runGame();
 }

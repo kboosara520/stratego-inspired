@@ -2,6 +2,7 @@
 #define GAME_CONTROLLER_H
 
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -10,14 +11,20 @@
 #include "player.h"
 
 class GameController {
-    std::istream &in;
+    std::istream *in;
+    std::ifstream file;
     std::ostream &out;
     std::vector<std::unique_ptr<Player>> players;
     std::unique_ptr<Board> board;
     int turn = 0;
     int findWinner();
   public:
-    GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream &in, std::ostream &out);
+    GameController(
+      std::vector<std::string> playerAbilities, 
+      std::vector<std::string> linkFiles, 
+      std::istream *in = &std::cin, 
+      std::ostream &out = std::cout
+    );
     int getTurn();
     void runGame();
 };

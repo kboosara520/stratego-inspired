@@ -1,6 +1,6 @@
 #include "gamecontroller.h"
 
-GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream &in, std::ostream &out): in{in}, out{out} {
+GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream *in, std::ostream &out): in{in}, out{out} {
     players.reserve(PLAYERCOUNT);
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         players.emplace_back(std::make_unique<Player>(i, playerAbilities[i], linkFiles[i]));
@@ -30,7 +30,7 @@ void GameController::runGame() {
     std::string command;
     bool winnerFound = false;
     int winner = -1;
-    while(in >> command) {
+    while(*in >> command) {
         if (command == "move") {
             // check if link is dead
             turn = (turn + 1) % PLAYERCOUNT; // updates whose turn it is
@@ -47,7 +47,17 @@ void GameController::runGame() {
             board->display(turn);
         }
         else if (command == "sequence") {
-
+            std::string fileName;
+            *in >> fileName;
+            file.open(fileName);
+            if (file.is_open()) {
+                in = &file;
+                break;
+            }
+            else {
+                out << "Unable to open the file" << std::endl;
+                continue;
+            }
         }
         else if (command == "quit") {
             break;
