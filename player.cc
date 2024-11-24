@@ -5,19 +5,21 @@ Player::Player(int id, std::string abilityList, std::string linkFile): playerId{
     for (int i = 0; i < abilityList.size(); ++i) {
         abilities.emplace_back(abilityList[i], true);
     }
-    links.reserve(LINKCOUNT);
     std::ifstream file{linkFile};
     if (file.is_open()) {
         for (int i = 0; i < LINKCOUNT; ++i) {
             char type;
             char strength;
             file >> type >> strength;
-            links.emplace_back(std::make_unique<Link>(
+            links.emplace(
                 LINKNAMES[playerId] + i,
-                type,
-                strength - '0',
-                playerId
-            ));
+                std::make_unique<Link>(
+                    LINKNAMES[playerId] + i,
+                    type,
+                    strength - '0',
+                    playerId      
+                )
+            );
         }
     }
     else { // randomizes the types and strengths if the file is not opened for any reason
@@ -28,14 +30,35 @@ Player::Player(int id, std::string abilityList, std::string linkFile): playerId{
         std::shuffle(strengths.begin(), strengths.end(), g);
         std::shuffle(types.begin(), types.end(), g);
         for (int i = 0; i < LINKCOUNT; ++i) {
-            links.emplace_back(std::make_unique<Link>(
+            links.emplace(
                 LINKNAMES[playerId] + i,
-                types[i],
-                strengths[i],
-                playerId
-            ));
+                std::make_unique<Link>(
+                    LINKNAMES[playerId] + i,
+                    types[i],
+                    strengths[i],
+                    playerId
+                )
+            );
         }
     }
 }
 
+void Player::useAbility(int id) {
+    // apply the ability's effect
+    // set the ability's availability to false
+    abilities[id - 1].second = false; 
+}
 
+int Player::getPlayerId() { return playerId; }
+
+int Player::getAbilityCount() { return abilityCount; }
+
+void Player::setAbilityCount(int n) { abilityCount = n; }
+
+int Player::getData() { return data; }
+
+void Player::setData(int n) { data = n; }
+
+int Player::getVirus() { return virus; }
+
+void  Player::setVirus(int n) { virus = n; }
