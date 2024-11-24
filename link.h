@@ -13,8 +13,12 @@ class Link {
     bool isAndOne;
     
     public:
-        Link(char name, char type, int strength, int owner, int movement = 1, bool isVisible = true, bool isDead = false);
+        Link(char name, char type, int strength, int owner, int movement = 1, bool isVisible = false, bool isDead = false, bool isTrojan = false, bool isAndOne = false);
         char getName();
+        char getType();
+        bool getIsTrojan();
+        void setIsVisble();
+        void setIsDead();
 };
 
 #endif
