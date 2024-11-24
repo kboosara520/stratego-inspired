@@ -38,7 +38,7 @@ class Player {
     bool wins() const;
     void checkLoss();
     bool isActive() const;
-    bool ownsKey(char name) const;
+    bool ownsLink(char name) const;
     bool linkIsDead(char name) const;
     const std::vector<std::pair<char, bool>> &getAbilities() const;
 };
