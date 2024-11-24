@@ -17,9 +17,12 @@ class Link {
         char getName();
         char getType();
         int getOwner();
+        int getMovement();
+        int getStrength();
         bool getIsTrojan();
         void setIsVisble();
         void setIsDead();
+        void setMovement();
 };
 
 #endif
