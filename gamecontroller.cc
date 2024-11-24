@@ -34,6 +34,8 @@ void GameController::runGame() {
         if (command == "move") {
             // check if link is dead
             turn = (turn + 1) % PLAYERCOUNT; // updates whose turn it is
+            winner = findWinner();
+            if (winner >= 0) break;
         }
         else if (command == "abilities") {
             out << players[turn]->getAbilities() << std::endl;;
@@ -52,11 +54,9 @@ void GameController::runGame() {
             file.open(fileName);
             if (file.is_open()) {
                 in = &file;
-                break;
             }
             else {
                 out << "Unable to open the file" << std::endl;
-                continue;
             }
         }
         else if (command == "quit") {
@@ -64,10 +64,7 @@ void GameController::runGame() {
         }
         else {
             out << "Invalid command" << std::endl;
-            continue;
         }
-        winner = findWinner();
-        if (winner >= 0) break;
     }
     if (winner >= 0) {
         out << "Player " << winner + 1 << " wins" << std::endl;
