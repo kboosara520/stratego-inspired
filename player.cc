@@ -49,20 +49,42 @@ void Player::useAbility(int id) {
     abilities[id - 1].second = false; 
 }
 
-int Player::getPlayerId() { return playerId; }
+int Player::getPlayerId() const { return playerId; }
 
-int Player::getAbilityCount() { return abilityCount; }
+int Player::getAbilityCount() const { return abilityCount; }
 
 void Player::setAbilityCount(int n) { abilityCount = n; }
 
-int Player::getData() { return data; }
+int Player::getData() const { return data; }
 
 void Player::setData(int n) { data = n; }
 
-int Player::getVirus() { return virus; }
+int Player::getVirus() const { return virus; }
 
 void Player::setVirus(int n) { virus = n; }
 
-bool Player::wins() { return data >= WINCONDITION; }
+bool Player::wins() const { return data >= WINCONDITION; }
 
-bool Player::loses() { return virus >= WINCONDITION; }
+void Player::checkLoss() {
+    if (virus >= WINCONDITION) active = false;
+}
+
+bool Player::isActive() const { return active; }
+
+const std::vector<std::pair<char, bool>> &Player::getAbilities() const {
+    return abilities;
+}
+
+std::ostream &operator<<(std::ostream &out, const std::vector<std::pair<char, bool>> &abilities) {
+  for (int i = 0; i < abilities.size(); ++i) {
+    out << i + 1 << ": " << CHAR2NAME.at(abilities[i].first) << ", available(not used): ";
+    if (abilities[i].second) {
+        out << "true";
+    }
+    else {
+        out << "false";
+    }
+    out << std::endl;
+  }
+  return out;
+}

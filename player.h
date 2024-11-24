@@ -23,19 +23,25 @@ class Player {
     int abilityCount;
     int data = 0;
     int virus = 0;
+    bool active = true;
 
   public:
     Player(int id, std::string abilityList, std::string linkFile);
     void useAbility(int id);
-    int getPlayerId();
-    int getAbilityCount();
+    int getPlayerId() const;
+    int getAbilityCount() const;
     void setAbilityCount(int n);
-    int getData();
+    int getData() const;
     void setData(int n);
-    int getVirus();
+    int getVirus() const;
     void setVirus(int n);
-    bool wins();
-    bool loses();
+    bool wins() const;
+    void checkLoss();
+    int getTurn() const;
+    bool isActive() const;
+    const std::vector<std::pair<char, bool>> &getAbilities() const;
 };
+
+std::ostream &operator<<(std::ostream &out, const std::vector<std::pair<char, bool>> &abilities);
 
 #endif

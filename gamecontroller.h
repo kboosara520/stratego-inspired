@@ -15,6 +15,7 @@ class GameController {
     std::vector<std::unique_ptr<Player>> players;
     std::unique_ptr<Board> board;
     int turn = 0;
+    int findWinner();
   public:
     GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream &in, std::ostream &out);
     int getTurn();
