@@ -5,6 +5,7 @@
 #include <utility>
 #include <memory> 
 #include <vector>
+#include "illegalmoveexception.h"
 #include "subject.h"
 #include "player.h"
 #include "gamecontroller.h"
@@ -13,6 +14,8 @@
 #include "constants.h"
 #include "basetile.h"
 #include "serverport.h"
+#include "firewall.h"
+#include "superfirewall.h"
 
 
 // do I need to potentially forward declare anything?  
@@ -37,6 +40,7 @@ class Board: public Subject{
   void move(char dir, char link_name); 
   void make_firewall(int i, int j); 
   void make_super_firewall(int i, int j); 
+  void display(int turn); // notifyall
 
 };
 

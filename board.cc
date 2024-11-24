@@ -10,13 +10,13 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, GameController
             // 1. make it a tile
             board[i][j] = std::make_unique<BaseTile> (); 
             if (isServer(i, j)){
-                // 2. decorate it with a server port 
-                board[i][j] = std::make_unique<ServerPort>(board[i][j]); // pass in index of player, and pointerof player 
-                
+                // 2. decorate it with a server port                 
                 // set the link on the link map as desired 
                 if (j == 0){
+                    board[i][j] = std::make_unique<ServerPort>(0 ,board[i][j], players[0]);
                     this->link_map.emplace('a'+i ,(i,j+1)); 
                 } else if (j == 7){
+                    board[i][j] = std::make_unique<ServerPort>(1 ,board[i][j], players[1]);
                     this->link_map.emplace('A'+i ,(i,j+1)); 
                 }
             } else {
@@ -74,7 +74,7 @@ j    - - - - - - - -
 char Board::getState(int row, int col ) const{
     return board[row][col]->charAt(); 
 }
-
+// ok so link 1 shall always be the aggressor 
 bool Board::fight(Link * link1, Link * link2){
     // Can't fight own link, need to test whether it's the same link, so
     
@@ -86,9 +86,6 @@ bool Board::fight(Link * link1, Link * link2){
 
 }
 
-bool valid_positions(std::pair pair ){
-
-}
 
 void Board::move(char dir, char link_name){
     // 1. find the position of the link based on the name 
@@ -98,31 +95,75 @@ void Board::move(char dir, char link_name){
 
     switch(dir){
         case UP:
-            p = std::make_pair(p.first, p.second - move_dist); 
+            p = std::make_pair(p.first, p.second - move_dist); break; 
         case DOWN:
-            p = std::make_pair(p.first, p.second + move_dist); 
+            p = std::make_pair(p.first, p.second + move_dist); break; 
         case LEFT:
-            p = std::make_pair(p.first - move_dist, p.second); 
+            p = std::make_pair(p.first - move_dist, p.second); break; 
         case RIGHT:
-            p = std::make_pair(p.first + move_dist, p.second);
+            p = std::make_pair(p.first + move_dist, p.second); break; 
     }
 
     // 2. check the tiles movement range 
         // To do that I need to know which direction it's allowed to move off the board 
         // so I need to know the owner 
+        // Player 1 (0) is at the top so the server ports 
+        // Player 2 (1) 
+    switch(owner){
+        case 0:
+            if (p.first < 0 || p.first > 7){
+                throw(IllegalMoveException("Player 1 has made an illegal move: exiting the left or right boundaries of the board"));
+            } else if (p.second <= 1 && (p.first == 3 || p.first == 4)){
+                throw(IllegalMoveException("Player 1 has made an illegal move: going on it's own server port")); 
+            } else if (p.second < 0){
+                throw(IllegalMoveException("Player 1 has made an illegal move: going back to it's own bay")); 
+            }
+            break;
+        case 1:
+            if (p.first < 0 || p.first > 7){
+                throw(IllegalMoveException("Player 2 has made an illegal move: exiting the left or right boundaries of the board"));
+            } else if (p.second >= 6 && (p.first == 3 || p.first == 4)){
+                throw(IllegalMoveException("Player 2 has made an illegal move: going on it's own server port")); 
+            } else if (p.second > 7){
+                throw(IllegalMoveException("Player 2 has made an illegal move: "));
+            }
+            break;
+    }
 
-    if (p.first > 8)
+    // check if the link exists
+        // check if it's not a nullptrs
+    Link * next = board[p.first][p.second]->getLink(); 
 
-    // 3. check if it's a valid more i.e, is it at the end of the border 
+    if (!next && owner == board[p.first][p.second]->getLink()->getOwner()){
+        ++owner; 
+        string message = "Player " + owner;
+        message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
+        throw(IllegalMoveException(message));
+    }
+    --owner; 
+
+    // so we established that i'ts not out of bounds and that the next link is not one of our own. 
+    // 3. check if the there is a link, and fight it 
+    // not sure how to check if it's a firewall or a superfireall
+
+    if (next){
+        fight( ,next); 
+    }
+    // check if the next move will cause it to disappear off the screen 
+
 
 }
 
-void Board::make_firewall(){
-
+void Board::make_firewall(int i, int j){
+    int owner = board[p.first][p.second]->getLink()->getOwner(); 
+    board[i][j] = std::make_unique<Firewall>(owner, board[i][j], players[owner]); 
 }
 
-void Board::make_super_firewall(){
-
+void Board::make_super_firewall(int i, int j){
+    int owner = board[p.first][p.second]->getLink()->getOwner(); 
+    board[i][j] = std::make_unique<SuperFireWall>(owner, board[i][j], players[owner]); 
 }
 
-void Board::display();
+void Board::display(int turn){
+    notifyObservers(); 
+}
