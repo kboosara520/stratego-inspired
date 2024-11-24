@@ -1,17 +1,11 @@
 #include "board.h"
-#include "constants.h"
-#include "basetile.h"
-#include "serverport.h"
 
 Board::Board(const std::vector<std::unique_ptr<Player>> &players, GameController *gc): gc{gc} {
     for (auto &ptr: players) {
         this->players.emplace_back(ptr.get());
     }
-
-    // initialise the unordered map. 
-
-
-    for (int i= 0; i < BOARDSIZE; ++i) {
+    // sets all the individual coordinates to either a base tile or a base-tiles with decorator server ports 
+    for (int i = 0; i < BOARDSIZE; ++i) {
         for (int j = 0; j < BOARDSIZE; j++){
             // 1. make it a tile
             board[i][j] = std::make_unique<BaseTile> (); 
@@ -25,10 +19,7 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, GameController
                 } else if (j == 7){
                     this->link_map.emplace('A'+i ,(i,j+1)); 
                 }
-
             } else {
-                // 1. make it a normal Tile 
-
                 // 2. put a link on the link map if it's between 0 and 7 
                 if (j == 0){
                     this->link_map.emplace('a'+i ,(i,j)); 
@@ -36,9 +27,8 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, GameController
                     this->link_map.emplace('A'+i ,(i,j)); 
                 }
             }
+        }
     }
-
-    // need to set all the individual coordinates to either a base tile or a base-tiles with decorator server ports 
 }
 
 bool isServer(int i, int j) {
@@ -49,7 +39,24 @@ bool isServer(int i, int j) {
 }
 
 void debugprint(Board* board){
-
+    for (int i = 0; i < BOARDSIZE; ++i) {
+        for (int j = 0; j < BOARDSIZE; j++){
+            for (auto it = link_map.begin(); it != link_map.end(); ++it){
+                bool tel = true; 
+                if(*it == (i, j)){
+                    std::cout<< *it;
+                    tel = false; 
+                    break;
+                }
+            }
+            if (!tel && isServer(i,j)){
+                std::cout<< "S"; 
+            } else{
+                std::cout<< "*"; 
+            }
+        }
+        std::cout<< std::endl;
+    }
 }
 /*
    i 0 1 2 3 4 5 6 7
@@ -64,12 +71,17 @@ j    - - - - - - - -
 7    * * * S S * * *
 */
 
-char Board::getState(int row, int col ) const override;
+char Board::getState(int row, int col ) const override{
+    return board[row][col]->charAt(); 
+}
 
-void Board::start();
+void Board::start(){
+
+}
 
 bool Board::fight(Link * link1, Link * link2){
     // Can't fight own link, need to test whether it's the same link, so
+    
     
 
 
@@ -79,10 +91,16 @@ bool Board::fight(Link * link1, Link * link2){
 }
 
 void Board::move(char dir, char link_name){
+    // 1. find the position of the link based on the name 
+    std::pair p = link_map[link_name]; 
+    int move_dist = board[p[0]][p[1]]->geLink()->getMovemnt(); 
 
-    // find the position of the link based for the name 
+    
+    board[p[0]][p[1]]
 
-    // check the tiles movement range 
+    // 2. check the tiles movement range 
+
+    // 3. check if it's a valid more i.e, is it at the end of the border 
 
 }
 

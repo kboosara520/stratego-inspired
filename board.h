@@ -1,21 +1,25 @@
 #ifndef STUDIO_H
 #define STUDIO_H
 #include <iostream>
-#include "subject.h"
+#include <unordered_map>
+#include <utility>
+#include <memory> 
 #include <vector>
+#include "subject.h"
 #include "player.h"
 #include "gamecontroller.h"
 #include "tile.h"
 #include "link.h"
-#include <unordered_map>
-#include <utility>
+#include "constants.h"
+#include "basetile.h"
+#include "serverport.h"
 
-// do I need to potentially forward declare anything?  class AsciiArt;
 
-// So I have an unordered_map that maps a pair of integers to 
+// do I need to potentially forward declare anything?  
+
 
 class Board: public Subject{
-  std::vector<Player * > players; 
+  std::vector<Player *> players; 
   std::unique_ptr<Tile> board[BOARDSIZE][BOARDSIZE]; 
   std::unordered_map< char , std::pair<int, int>> link_map;
   GameController * gc; 

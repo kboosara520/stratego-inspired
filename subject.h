@@ -11,7 +11,7 @@ class Subject {
   void detach( Observer* o );
   void notifyObservers();
 
-  virtual char getState( /* SOmething added over herere */ ) const = 0;
+  virtual char getState(int row, int col) const = 0;
   virtual ~Subject() = default;
 };
 
