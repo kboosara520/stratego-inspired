@@ -11,7 +11,7 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, GameController
             board[i][j] = std::make_unique<BaseTile> (); 
             if (isServer(i, j)){
                 // 2. decorate it with a server port 
-                board[i][j] = std::make_unique<ServerPort>(board[i][j]); 
+                board[i][j] = std::make_unique<ServerPort>(board[i][j]); // pass in index of player, and pointerof player 
                 
                 // set the link on the link map as desired 
                 if (j == 0){
@@ -31,20 +31,20 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, GameController
     }
 }
 
-bool isServer(int i, int j) {
+bool Board::isServer(int i, int j) {
     return (i == 3 && j == 0) || 
             (i == 4 && j == 0) ||
             (i == 3 && j == 7) ||
             (i == 3 && j == 7);
 }
 
-void debugprint(Board* board){
+void Board::debugprint(Board* board){
     for (int i = 0; i < BOARDSIZE; ++i) {
         for (int j = 0; j < BOARDSIZE; j++){
-            for (auto it = link_map.begin(); it != link_map.end(); ++it){
-                bool tel = true; 
-                if(*it == (i, j)){
-                    std::cout<< *it;
+            bool tel = true;
+            for (auto it = link_map.begin(); it != link_map.end(); ++it){ 
+                if(*it == std::make_pair(i, j)){
+                    std::cout<< "l";
                     tel = false; 
                     break;
                 }
@@ -71,12 +71,8 @@ j    - - - - - - - -
 7    * * * S S * * *
 */
 
-char Board::getState(int row, int col ) const override{
+char Board::getState(int row, int col ) const{
     return board[row][col]->charAt(); 
-}
-
-void Board::start(){
-
 }
 
 bool Board::fight(Link * link1, Link * link2){
@@ -90,17 +86,42 @@ bool Board::fight(Link * link1, Link * link2){
 
 }
 
+bool valid_positions(std::pair pair ){
+
+}
+
 void Board::move(char dir, char link_name){
     // 1. find the position of the link based on the name 
     std::pair p = link_map[link_name]; 
-    int move_dist = board[p[0]][p[1]]->geLink()->getMovemnt(); 
+    int move_dist = board[p.first][p.second]->getLink()->getMovement();
+    int owner = board[p.first][p.second]->getLink()->getOwner(); 
 
-    
-    board[p[0]][p[1]]
+    switch(dir){
+        case UP:
+            p = std::make_pair(p.first, p.second - move_dist); 
+        case DOWN:
+            p = std::make_pair(p.first, p.second + move_dist); 
+        case LEFT:
+            p = std::make_pair(p.first - move_dist, p.second); 
+        case RIGHT:
+            p = std::make_pair(p.first + move_dist, p.second);
+    }
 
     // 2. check the tiles movement range 
+        // To do that I need to know which direction it's allowed to move off the board 
+        // so I need to know the owner 
+
+    if (p.first > 8)
 
     // 3. check if it's a valid more i.e, is it at the end of the border 
+
+}
+
+void Board::make_firewall(){
+
+}
+
+void Board::make_super_firewall(){
 
 }
 

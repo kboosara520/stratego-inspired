@@ -33,9 +33,10 @@ class Board: public Subject{
 
   char getState(int row, int col ) const override;
 
-  void start();
   Link fight(Link * link1, Link * link2); 
   void move(char dir, char link_name); 
+  void make_firewall(int i, int j); 
+  void make_super_firewall(int i, int j); 
 
 };
 
