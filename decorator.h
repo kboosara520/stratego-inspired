@@ -1,5 +1,5 @@
-#ifndef BASETILE_H
-#define BASETILE_H
+#ifndef DECORATOR_H
+#define DECORATOR_H
 #include "tile.h"
 
 class Decorator: public Tile {
