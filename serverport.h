@@ -2,6 +2,7 @@
 #define SERVERPORT_H
 #include "decorator.h"
 #include "player.h"
+#include "constants.h"
 
 class ServerPort: public Decorator {
     int owner; // player index value

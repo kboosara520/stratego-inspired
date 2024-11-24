@@ -19,14 +19,14 @@ void Firewall::activate() {
                 if (l->getType() == 'd') {
                     l->setIsDead(true);
                     powner->setVirus(powner->getVirus() + 1);
-                    l = nullptr;
+                    setLink(nullptr); // should set link to null and apply recursively
                 } 
             }
             else if (l->getType() == 'v') {
                 // if virus, download, increase virus count, remove link
                 l->setIsDead(true);
                 powner->setVirus(powner->getVirus() + 1);
-                l = nullptr;
+                setLink(nullptr);
             }
         }
     }
