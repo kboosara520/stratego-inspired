@@ -22,4 +22,6 @@ const std::vector<char> LINKNAMES{'a', 'A'};
 const char DATA = 'D';
 const char VIRUS = 'V';
 
+const std::vector<char> FIREWALLNAMES{'m', 'w'};
+
 #endif

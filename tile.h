@@ -3,9 +3,10 @@
 #include "link.h"
 
 class Tile {
-    protected:
+    public:
         virtual char charAt() = 0;
         virtual void activate() = 0;
+    protected:
         Link * l;
         void setLink(Link * other);
         Link * getLink();

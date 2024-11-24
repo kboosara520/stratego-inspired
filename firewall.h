@@ -1,12 +1,14 @@
 #ifndef FIREWALL_H
 #define FIREWALL_H
 #include "decorator.h"
+#include "constants.h"
+#include <memory>
 
 class Firewall: Decorator {
     
     int owner; //index of the player that owns the firewall
     public:
-        Firewall(int owner, Tile * next);
+        Firewall(int owner, std::unique_ptr<Tile> next);
 
         //should check if there is a link, if owner's link display it, otherwise display firewall. 
         //How to determine char to be displayed for firewall?
