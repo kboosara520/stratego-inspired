@@ -51,6 +51,7 @@ void GameController::runGame() {
                     board->move(move.dir, move.name);
                 } catch (IllegalMoveException e) {
                     out << e.what() << std::endl;
+                    out << "Enter another move: ";
                     continue;
                 }
                 break;
