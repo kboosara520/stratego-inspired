@@ -189,7 +189,8 @@ void Board::move(char dir, char link_name){
 
 void Board::make_firewall(int i, int j){
     int owner = board[i][j]->getLink()->getOwner(); 
-    board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players[owner]); 
+    // board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players[owner]); 
+    board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players[owner]);
 }
 
 void Board::make_super_firewall(int i, int j){

@@ -1,6 +1,6 @@
 #include "firewall.h"
 
-Firewall::Firewall(int owner, std::unique_ptr<Tile> next, Player *player): Decorator{std::move(next)}, owner{owner}, powner{player}{}
+Firewall::Firewall(int owner, std::unique_ptr<Tile> &&next, Player *player): Decorator{std::move(next)}, owner{owner}, powner{player}{}
 char Firewall::charAt() {
     if (l != nullptr) {
         return l->getName();
