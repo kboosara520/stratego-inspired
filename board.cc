@@ -171,7 +171,7 @@ void Board::move(char dir, char link_name){
     Link * next = board[op.first][op.second]->getLink(); 
 
     if (!next && owner == board[op.first][op.second]->getLink()->getOwner()){
-        string message = "Player " + (1+ owner);
+        std::string message = "Player " + (1+ owner);
         message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
         throw(IllegalMoveException(message));
     }
