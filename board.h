@@ -26,7 +26,6 @@ class Board: public Subject{
   std::vector<Player *> players; 
   std::unique_ptr<Tile> board[BOARDSIZE][BOARDSIZE]; 
   std::unordered_map< char , std::pair<int, int>> link_map;
-  GameController * gc; 
 
   // my private methods (helper functions)
   bool isServer(int i, int j);

@@ -27,18 +27,18 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, const int &tur
                 // 2. decorate it with a server port                 
                 // set the link on the link map as desired 
                 if (j == 0){
-                    board[i][j] = std::make_unique<ServerPort>(0 ,board[i][j], players[0]);
-                    this->link_map.emplace('a'+i ,(i,j+1)); 
+                    board[i][j] = std::make_unique<ServerPort>(0 , std::move(board[i][j]), players[0].get());
+                    this->link_map.emplace('a'+i , std::pair<int, int>{i,j+1}); 
                 } else if (j == 7){
-                    board[i][j] = std::make_unique<ServerPort>(1 ,board[i][j], players[1]);
-                    this->link_map.emplace('A'+i ,(i,j+1)); 
+                    board[i][j] = std::make_unique<ServerPort>(1 , std::move(board[i][j]), players[1].get());
+                    this->link_map.emplace('A'+i , std::pair<int, int>{i,j+1}); 
                 }
             } else {
                 // 2. put a link on the link map if it's between 0 and 7 
                 if (j == 0){
-                    this->link_map.emplace('a'+i ,(i,j)); 
+                    this->link_map.emplace('a'+i ,std::pair<int, int>{i, j}); 
                 } else if (j == 7){
-                    this->link_map.emplace('A'+i ,(i,j)); 
+                    this->link_map.emplace('A'+i ,std::pair<int, int>{i, j}); 
                 }
             }
         }
@@ -58,7 +58,7 @@ void Board::debugprint(Board* board){
         for (int j = 0; j < BOARDSIZE; j++){
             bool tel = true;
             for (auto it = link_map.begin(); it != link_map.end(); ++it){ 
-                if(*it == std::make_pair(i, j)){
+                if(it->second == std::make_pair(i, j)){
                     std::cout<< "l";
                     tel = false; 
                     break;
@@ -171,8 +171,9 @@ void Board::move(char dir, char link_name){
     Link * next = board[op.first][op.second]->getLink(); 
 
     if (!next && owner == board[op.first][op.second]->getLink()->getOwner()){
-        std::string message = "Player " + (1+ owner);
-        message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
+        int index = owner + 1;
+        std::string message = "Player " + std::to_string(index) + " has made an illegal move";
+        // message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
         throw(IllegalMoveException(message));
     }
 

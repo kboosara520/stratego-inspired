@@ -9,10 +9,11 @@ class Tile {
         virtual void updateLink(Link * other) = 0;
         void setLink(Link * other);
         Link * getLink();
+        virtual ~Tile() = default;
 
     protected:
-        Link * l;
         Tile(Link * l = nullptr);
+        Link * l;
 };
 
 #endif
