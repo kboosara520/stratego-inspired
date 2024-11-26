@@ -45,7 +45,7 @@ class Board: public Subject{
   void display(int turn); // notifyall
   void download(int player, Link * link); 
   void update(int player, Link * link); 
-
+  void apply(char abName, int x, int y);
 };
 
 #endif

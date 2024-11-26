@@ -52,7 +52,12 @@ char GameController::getLinkName() {
 }
 
 Coords GameController::getCoords() {
-    return {0, 0};
+    int x, y;
+    *in >> y >> x;
+    if (!(x >= 0 && y >= 0 && x < BOARDSIZE && y < BOARDSIZE)) {
+        throw IllegalAbilityUseException{"Coordinates out of bounds"};
+    }
+    return {x, y};
 }
 
 void GameController::runGame() {
@@ -120,7 +125,16 @@ void GameController::runGame() {
                 }
             }
             else {
-
+                Coords coords;
+                try {
+                    coords = getCoords();
+                }
+                catch (IllegalAbilityUseException e) {
+                    out << e.what() << std::endl;
+                    continue;
+                }
+                // call board to apply effects
+                board->apply(abPair.first, coords.x, coords.y);
             }
             winner = findWinner();
             if (winner >= 0) break;
