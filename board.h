@@ -20,7 +20,7 @@
 
 // do I need to potentially forward declare anything?  
 
-
+using namespace std; 
 class Board: public Subject{
   const int &turn;
   std::vector<Player *> players; 

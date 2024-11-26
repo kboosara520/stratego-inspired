@@ -82,8 +82,6 @@ char Board::getState(int row, int col ) const{
 // ok so link 1 shall always be the aggressor 
 Link* Board::fight(Link * link1, Link * link2){
     // Can't fight own link, need to test whether it's the same link, so
-    int x = 0; 
-    int y = 0; 
     for (int i = 0; i < BOARDSIZE; ++i){
         for (int j = 0; j < BOARDSIZE; ++j){
                  // find the bloody link
@@ -189,6 +187,7 @@ void Board::move(char dir, char link_name){
 
 void Board::download(int player, Link * link) {
     // check that 
+    cout<<"help"; 
 }
 
 
