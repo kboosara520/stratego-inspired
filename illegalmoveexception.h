@@ -1,15 +1,18 @@
+#ifndef ILLEGAL_MOVE_EXCEPTION_H
+#define ILLEGAL_MOVE_EXCEPTION_H
+
 #include <iostream>
 #include <string>
-#include <stdexcept>
+#include <stdexcept> 
 
-using namespace std; 
-
-class IllegalMoveException : public exception {
+class IllegalMoveException : public std::exception {
 private:
-    string message;
+    std::string message;
 
 public:
-    IllegalMoveException(const string& msg): message(msg) {}
+    IllegalMoveException(const std::string& msg);
 
     const char* what() const noexcept override; 
 };
+
+#endif

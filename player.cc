@@ -77,6 +77,25 @@ bool Player::ownsLink(char name) const { return links.count(name) > 0; }
 
 bool Player::linkIsDead(char name) const { return links.at(name)->getIsDead(); }
 
+void Player::boostLink(char name) {
+    links[name]->setMovement(2);
+}
+
+void Player::polarize(char name) {
+    Link *link = links[name].get();
+    char type = link->getType();
+    if (type == DATA) link->setType(VIRUS);
+    else link->setType(DATA);
+}
+
+void Player::addTrojan(char name) {
+    links[name]->setIsTrojan(true);
+}
+
+void Player::addAndOne(char name) {
+    links[name]->setIsAndOne(true);
+}
+
 std::ostream &operator<<(std::ostream &out, const std::vector<std::pair<char, bool>> &abilities) {
   for (int i = 0; i < abilities.size(); ++i) {
     out << i + 1 << ": " << CHAR2NAME.at(abilities[i].first) << ", available(not used): ";

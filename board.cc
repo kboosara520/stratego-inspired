@@ -165,12 +165,10 @@ void Board::move(char dir, char link_name){
     Link * next = board[op.first][op.second]->getLink(); 
 
     if (!next && owner == board[op.first][op.second]->getLink()->getOwner()){
-        ++owner; 
-        string message = "Player " + owner;
+        string message = "Player " + (owner + 1);
         message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
         throw(IllegalMoveException(message));
     }
-    --owner; 
 
     // so we established that i'ts not out of bounds and that the next link is not one of our own. 
     // 3. check if the there is a link, and fight it 

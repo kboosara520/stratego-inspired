@@ -10,6 +10,7 @@
 #include "constants.h"
 #include "player.h"
 #include "illegalmoveexception.h"
+#include "illegalabilityuseexception.h"
 
 struct Move {
     char name;
@@ -25,6 +26,7 @@ class GameController {
     int turn = 0;
     int findWinner();
     Move getMove();
+    char getLinkName();
   public:
     GameController(
       std::vector<std::string> playerAbilities, 

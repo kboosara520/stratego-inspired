@@ -26,6 +26,7 @@ int GameController::findWinner() {
     return -1;
 }
 
+
 Move GameController::getMove() {
     char name;
     char dir;
@@ -39,6 +40,17 @@ Move GameController::getMove() {
     return {name, dir};
 }
 
+char GameController::getLinkName() {
+    char name;
+    *in >> name;
+    if (players[turn]->ownsLink(name)) {
+        throw IllegalAbilityUseException{"The player does not own the link"};
+    }
+    if (players[turn]->linkIsDead(name)) {
+        throw IllegalAbilityUseException{"The Link is dead"};
+    }
+    return name;
+}
 void GameController::runGame() {
     std::string command;
     bool winnerFound = false;
@@ -61,10 +73,47 @@ void GameController::runGame() {
             if (winner >= 0) break;
         }
         else if (command == "abilities") {
-            out << players[turn]->getAbilities() << std::endl;;
+            out << players[turn]->getAbilities() << std::endl;
         }
         else if (command == "ability") {
-            // check if link is dead
+            int abId;
+            *in >> abId;
+            if (abId < 1) {
+                out << "Invalid ability ID (1-5)" << std::endl;
+                continue;
+            }
+            --abId; // get the index of the vector
+            auto abilities = players[turn]->getAbilities();
+            auto abPair = abilities[abId];
+            if (!abPair.second) {
+                out << "Ability has been used" << std::endl;
+                continue;
+            }
+            char name;
+            try {
+                name = getLinkName();
+            }
+            catch (IllegalAbilityUseException e) {
+                out << e.what() << std::endl;
+                continue;
+            }
+            switch (abPair.first) {
+                case ('L'):
+                    players[turn]->boostLink(name);
+                    break;
+                case ('P'):
+                    players[turn]->polarize(name);
+                    break;
+                case ('T'):
+                    players[turn]->addTrojan(name);
+                    break;
+                case ('A'):
+                    players[turn]->addAndOne(name);
+                    break;
+                default:
+                    // call board to apply effects
+                    break;
+            }
             winner = findWinner();
             if (winner >= 0) break;
         }

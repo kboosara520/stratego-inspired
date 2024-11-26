@@ -33,3 +33,11 @@ void Link::setMovement(int movement) {
 void Link::setIsTrojan(bool isTrojan) {
     this->isTrojan = isTrojan;
 }
+
+void Link::setIsAndOne(bool isAndOne) {
+    this->isAndOne = isAndOne;
+}
+
+void Link::setType(char type) {
+    this->type = type;
+}

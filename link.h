@@ -26,6 +26,8 @@ class Link {
         void setIsDead(bool isDead);
         void setMovement(int movement);
         void setIsTrojan(bool isTrojan);
+        void setIsAndOne(bool isAndOne);
+        void setType(char type);
 };
 
 #endif

@@ -40,6 +40,10 @@ class Player {
     bool isActive() const;
     bool ownsLink(char name) const;
     bool linkIsDead(char name) const;
+    void boostLink(char name);
+    void polarize(char name);
+    void addTrojan(char name);
+    void addAndOne(char name);
     const std::vector<std::pair<char, bool>> &getAbilities() const;
 };
 
