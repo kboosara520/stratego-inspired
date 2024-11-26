@@ -38,6 +38,7 @@ bool Board::isServer(int i, int j) {
             (i == 3 && j == 7);
 }
 
+
 void Board::debugprint(Board* board){
     for (int i = 0; i < BOARDSIZE; ++i) {
         for (int j = 0; j < BOARDSIZE; j++){
@@ -58,6 +59,8 @@ void Board::debugprint(Board* board){
         std::cout<< std::endl;
     }
 }
+
+
 /*
    i 0 1 2 3 4 5 6 7
 j    - - - - - - - -
@@ -71,9 +74,11 @@ j    - - - - - - - -
 7    * * * S S * * *
 */
 
+
 char Board::getState(int row, int col ) const{
     return board[row][col]->charAt(); 
 }
+
 // ok so link 1 shall always be the aggressor 
 Link* Board::fight(Link * link1, Link * link2){
     // Can't fight own link, need to test whether it's the same link, so
