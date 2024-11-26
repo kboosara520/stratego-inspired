@@ -5,7 +5,7 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         players.emplace_back(std::make_unique<Player>(i, playerAbilities[i], linkFiles[i]));
     }
-    board = std::make_unique<Board>(players, this);
+    board = std::make_unique<Board>(players, turn);
 }
 
 int GameController::findWinner() {

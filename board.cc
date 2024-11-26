@@ -14,7 +14,7 @@ j    - - - - - - - -
 */
 
 
-Board::Board(const std::vector<std::unique_ptr<Player>> &players, GameController *gc): gc{gc} {
+Board::Board(const std::vector<std::unique_ptr<Player>> &players, const int &turn): turn{turn} {
     for (auto &ptr: players) {
         this->players.emplace_back(ptr.get());
     }

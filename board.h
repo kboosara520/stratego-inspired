@@ -9,7 +9,6 @@
 #include "illegalmoveexception.h"
 #include "subject.h"
 #include "player.h"
-#include "gamecontroller.h"
 #include "tile.h"
 #include "link.h"
 #include "constants.h"
@@ -23,6 +22,7 @@
 
 
 class Board: public Subject{
+  const int &turn;
   std::vector<Player *> players; 
   std::unique_ptr<Tile> board[BOARDSIZE][BOARDSIZE]; 
   std::unordered_map< char , std::pair<int, int>> link_map;
@@ -34,7 +34,7 @@ class Board: public Subject{
   void check_valid_move(char dir, char link_name);
 
  public:
-  explicit Board(const std::vector<std::unique_ptr<Player>> &players, GameController* gc);
+  explicit Board(const std::vector<std::unique_ptr<Player>> &players, const int &turn);
 
   char getState(int row, int col ) const override;
 
