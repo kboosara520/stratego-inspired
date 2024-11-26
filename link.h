@@ -22,6 +22,7 @@ class Link {
         int getStrength();
         bool getIsTrojan();
         bool getIsDead();
+        bool getIsVisble();
         void setIsVisble(bool isVisible);
         void setIsDead(bool isDead);
         void setMovement(int movement);

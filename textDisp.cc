@@ -1,7 +1,12 @@
 #include "textDisp.h"
 using namespace std;
 
-TextDisp::TextDisp(Board * board, std::vector<Player *> players): board{board}, players{players}{}
+TextDisp::TextDisp(Board * board, std::vector<Player *> players): board{board}, players{players}{
+    board->attach(this);
+}
+TextDisp::~TextDisp(){
+    board->detach(this);
+}
 void TextDisp::displayBoard() {
     
     // MAY NEED TO CHECK IF ITS A TROJAN, HAVE A DIFFERENT OUTPUT
@@ -19,9 +24,9 @@ void TextDisp::displayBoard() {
             // if its player 1's turn or the piece is visible, display piece
             // otherwise show as question mark
             char index = 'A' + i + j;
-            cout << p1Links[index]->getName() << " ";
-            if (ticks % 2 == 0 || p1Links[index]->isVisble()) {
-                cout << p1Links[index]->getType() << p1Links[index]->getStrength() << " ";
+            cout << p1Links.at(index)->getName() << " ";
+            if (ticks % 2 == 0 || p1Links.at(index)->getIsVisble()) {
+                cout << p1Links.at(index)->getType() << p1Links.at(index)->getStrength() << " ";
             } else {
                 cout << "?  ";
             }
@@ -44,9 +49,9 @@ void TextDisp::displayBoard() {
     for (int i = 0; i < BOARDSIZE/2; i++) {
         for (int j = 0; j < BOARDSIZE/2; j++) {
             char index = 'a' + i + j;
-            cout << p1Links[index]->getName() << " ";
-            if (ticks % 2 == 1 || p2Links[index]->isVisble()) {
-                cout << p2Links[index]->getType() << p2Links[index]->getStrength() << " ";
+            cout << p2Links.at(index)->getName() << " ";
+            if (ticks % 2 == 1 || p2Links.at(index)->getIsVisble()) {
+                cout << p2Links.at(index)->getType() << p2Links.at(index)->getStrength() << " ";
             } else {
                 cout << "?  ";
             }

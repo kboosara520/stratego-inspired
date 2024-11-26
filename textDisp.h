@@ -12,5 +12,6 @@ class TextDisp: public Observer {
     public:
         //constructor 
         TextDisp(Board * board, std::vector<Player *> players); 
+        ~TextDisp();
         void displayBoard(); 
 };
