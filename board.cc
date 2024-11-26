@@ -1,5 +1,19 @@
 #include "board.h"
 
+/*
+   i 0 1 2 3 4 5 6 7
+j    - - - - - - - -
+0    * * * S S * * *
+1    * * * * * * * *
+2    * * * * * * * *
+3    * * * * * * * *
+4    * * * * * * * *
+5    * * * * * * * *
+6    * * * * * * * *
+7    * * * S S * * *
+*/
+
+
 Board::Board(const std::vector<std::unique_ptr<Player>> &players, GameController *gc): gc{gc} {
     for (auto &ptr: players) {
         this->players.emplace_back(ptr.get());
@@ -61,20 +75,6 @@ void Board::debugprint(Board* board){
 }
 
 
-/*
-   i 0 1 2 3 4 5 6 7
-j    - - - - - - - -
-0    * * * S S * * *
-1    * * * * * * * *
-2    * * * * * * * *
-3    * * * * * * * *
-4    * * * * * * * *
-5    * * * * * * * *
-6    * * * * * * * *
-7    * * * S S * * *
-*/
-
-
 char Board::getState(int row, int col ) const{
     return board[row][col]->charAt(); 
 }
@@ -99,7 +99,7 @@ Link* Board::fight(Link * link1, Link * link2){
         }
     }
     auto win = link1->getStrength() <=> link2->getStrength(); 
-    if (win >= 0){
+    if (win == 0 || win > 0){
         return link1; 
     } 
     return link2; 
@@ -107,9 +107,10 @@ Link* Board::fight(Link * link1, Link * link2){
 }
 
 
-void check_valid_move(char dir, char link_name){
+void Board::check_valid_move(char dir, char link_name){
         // 1. find the position of the link based on the name 
-    std::pair op = link_map[link_name]; 
+    std::pair op {0,0}; 
+    op = link_map[link_name]; 
     int move_dist = board[op.first][op.second]->getLink()->getMovement();
     int owner = board[op.first][op.second]->getLink()->getOwner(); 
     std::pair p{0,0}; 
@@ -170,7 +171,7 @@ void Board::move(char dir, char link_name){
     Link * next = board[op.first][op.second]->getLink(); 
 
     if (!next && owner == board[op.first][op.second]->getLink()->getOwner()){
-        string message = "Player " + (owner + 1);
+        string message = "Player " + (1+ owner);
         message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
         throw(IllegalMoveException(message));
     }
@@ -186,13 +187,13 @@ void Board::move(char dir, char link_name){
 }
 
 void Board::make_firewall(int i, int j){
-    int owner = board[p.first][p.second]->getLink()->getOwner(); 
-    board[i][j] = std::make_unique<Firewall>(owner, board[i][j], players[owner]); 
+    int owner = board[i][j]->getLink()->getOwner(); 
+    board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players[owner]); 
 }
 
 void Board::make_super_firewall(int i, int j){
-    int owner = board[p.first][p.second]->getLink()->getOwner(); 
-    board[i][j] = std::make_unique<SuperFireWall>(owner, board[i][j], players[owner]); 
+    int owner = board[i][j]->getLink()->getOwner(); 
+    board[i][j] = std::make_unique<SuperFireWall>(owner, std::move(board[i][j]), players[owner]); 
 }
 
 void Board::display(int turn){

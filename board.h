@@ -31,6 +31,7 @@ class Board: public Subject{
   // my private methods (helper functions)
   bool isServer(int i, int j);
   void debugprint(Board* board); 
+  void check_valid_move(char dir, char link_name);
 
  public:
   explicit Board(const std::vector<std::unique_ptr<Player>> &players, GameController* gc);
