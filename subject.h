@@ -22,6 +22,4 @@ class Subject {
 +detach(Observer *o): void
 +getState(): Player
 
-
-
 */
