@@ -73,6 +73,8 @@ bool Player::isActive() const { return active; }
 
 const std::vector<std::pair<char, bool>> &Player::getAbilities() const { return abilities; }
 
+const std::map<char, std::unique_ptr<Link>> &Player::getLinks() const { return links; }
+
 bool Player::ownsLink(char name) const { return links.count(name) > 0; }
 
 bool Player::linkIsDead(char name) const { return links.at(name)->getIsDead(); }

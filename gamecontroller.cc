@@ -26,7 +26,6 @@ int GameController::findWinner() {
     return -1;
 }
 
-
 Move GameController::getMove() {
     char name;
     char dir;
@@ -51,6 +50,11 @@ char GameController::getLinkName() {
     }
     return name;
 }
+
+Coords GameController::getCoords() {
+    return {0, 0};
+}
+
 void GameController::runGame() {
     std::string command;
     bool winnerFound = false;
@@ -89,30 +93,34 @@ void GameController::runGame() {
                 out << "Ability has been used" << std::endl;
                 continue;
             }
-            char name;
-            try {
-                name = getLinkName();
+            if (LINKABILITIES.count(abPair.first) > 0) {
+                char name;
+                try {
+                    name = getLinkName();
+                }
+                catch (IllegalAbilityUseException e) {
+                    out << e.what() << std::endl;
+                    continue;
+                }
+                switch (abPair.first) {
+                    case ('L'):
+                        players[turn]->boostLink(name);
+                        break;
+                    case ('P'):
+                        players[turn]->polarize(name);
+                        break;
+                    case ('T'):
+                        players[turn]->addTrojan(name);
+                        break;
+                    case ('A'):
+                        players[turn]->addAndOne(name);
+                        break;
+                    default:
+                        break;
+                }
             }
-            catch (IllegalAbilityUseException e) {
-                out << e.what() << std::endl;
-                continue;
-            }
-            switch (abPair.first) {
-                case ('L'):
-                    players[turn]->boostLink(name);
-                    break;
-                case ('P'):
-                    players[turn]->polarize(name);
-                    break;
-                case ('T'):
-                    players[turn]->addTrojan(name);
-                    break;
-                case ('A'):
-                    players[turn]->addAndOne(name);
-                    break;
-                default:
-                    // call board to apply effects
-                    break;
+            else {
+
             }
             winner = findWinner();
             if (winner >= 0) break;

@@ -45,6 +45,7 @@ class Player {
     void addTrojan(char name);
     void addAndOne(char name);
     const std::vector<std::pair<char, bool>> &getAbilities() const;
+    const std::map<char, std::unique_ptr<Link>> &getLinks() const;
 };
 
 std::ostream &operator<<(std::ostream &out, const std::vector<std::pair<char, bool>> &abilities);

@@ -17,6 +17,10 @@ struct Move {
     char dir;
 };
 
+struct Coords {
+    int x, y;
+};
+
 class GameController {
     std::istream *in;
     std::ifstream file;
@@ -27,6 +31,7 @@ class GameController {
     int findWinner();
     Move getMove();
     char getLinkName();
+    Coords getCoords();
   public:
     GameController(
       std::vector<std::string> playerAbilities, 

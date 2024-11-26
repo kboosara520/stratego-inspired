@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <set>
 #include <vector>
 
 const int PLAYERCOUNT = 2;
@@ -19,6 +20,7 @@ const std::unordered_map<char, std::string> CHAR2NAME{
     {'T', "Trojan"},
     {'A', "And one"}
 };
+const std::set<char> LINKABILITIES{'L', 'P', 'T', 'A'};
 const std::vector<char> LINKNAMES{'a', 'A'};
 const char DATA = 'D';
 const char VIRUS = 'V';
