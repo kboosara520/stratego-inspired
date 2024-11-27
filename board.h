@@ -44,7 +44,8 @@ class Board: public Subject{
   void make_super_firewall(int i, int j); 
   void display(int turn); // notifyall
   void download(int player, char linkname); 
-  void polarize(char linkname) const; 
+  void polarize(char linkname); 
+  void scan(char linkname);
   void update(int player, Link * link); 
 };
 

@@ -159,7 +159,7 @@ void Board::move(char dir, char link_name){
 
     // check if the next move will cause it to download the link (currently will download anything lolololol)
     if (p.first < 0 || p.first > 7){
-        download(owner, board[op.first][op.second]->getLink()); 
+        download(owner, link_name); 
         update(owner, board[op.first][op.second]->getLink()); 
     }
 
@@ -185,15 +185,25 @@ void Board::move(char dir, char link_name){
 
 }
 
-void Board::download(int player, Link * link) {
+void Board::download(int player, char linkname) {
     // check that 
-    players[player]
-
-
+    if (link_map.count(linkname) <= 0) {
+        throw IllegalAbilityUseException{"Illegal ability use!: Link does not exist"};
+    }
+    std::pair<int, int> coords = link_map[linkname];
+    Tile *tile = board[coords.first][coords.second].get();
+    Link *link = tile->getLink();
+    if (link->getIsDead()) {
+        throw IllegalAbilityUseException{"Illegal ability use!: Link is dead!"};
+    }
+    char type = link->getType();
+    if (type == VIRUS) players[player]->setVirus(players[player]->getVirus() + 1);
+    else players[player]->setData(players[player]->getData() + 1);
+    tile->setLink(nullptr);
 }
 
 
-void Board::polarize(char linkname) const{
+void Board::polarize(char linkname) {
     // check 
     if (!link_map.count(linkname)){
         throw(IllegalAbilityUseException("Illegal ability use!: Link does not exist")); 

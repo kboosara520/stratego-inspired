@@ -148,6 +148,10 @@ void GameController::runGame() {
                             break;
                     }
                 }
+                catch (IllegalAbilityUseException e) {
+                    cout << e.what() << std::endl;
+                    continue;
+                }
             }
             else {
                 Coords coords;
