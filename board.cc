@@ -1,5 +1,5 @@
 #include "board.h"
-
+//[i][j]
 /*
    i 0 1 2 3 4 5 6 7
 j    - - - - - - - -
@@ -160,7 +160,7 @@ void Board::move(char dir, char link_name){
     // check if the next move will cause it to download the link (currently will download anything lolololol)
     if (p.first < 0 || p.first > 7){
         download(owner, link_name); 
-        update(owner, board[op.first][op.second]->getLink()); 
+        display(owner); 
     }
 
 
@@ -219,21 +219,24 @@ void Board::polarize(char linkname) {
 
 
 void Board::make_firewall(int i, int j){
-    if (board[i][j]->charAt() != SERVERPORTNAME || board[i][j]->charAt() != FIREWALLNAMES[0] || board[i][j]->charAt() != FIREWALLNAMES[1]){
-        throw(IllegalAbilityUseException("Illegal ability use!: Not a serverport or ")); 
+
+    // checks if it's 
+    if (board[i][j]->getLink() || board[i][j]->charAt() == SERVERPORTNAME ||
+     board[i][j]->charAt() == FIREWALLNAMES[0] ||
+      board[i][j]->charAt() == FIREWALLNAMES[1]) {
+        throw(IllegalAbilityUseException("Illegal ability use!: Firewall")); 
     }
-    // check if it's valid 
-    if 
-
-    // check if it's your own firewall 
-    if not throw excpetion 
-
 
     int owner = board[i][j]->getLink()->getOwner(); 
     board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players);
 }
 
 void Board::make_super_firewall(int i, int j){
+    if (board[i][j]->charAt() != SERVERPORTNAME ||
+        board[i][j]->charAt() != FIREWALLNAMES[turn]){
+        throw(IllegalAbilityUseException("Illegal ability use!: Not a serverport or Firewall belonging to the player")); 
+    }
+
     int owner = board[i][j]->getLink()->getOwner(); 
     board[i][j] = std::make_unique<SuperFireWall>(owner, std::move(board[i][j]), players); 
 }
