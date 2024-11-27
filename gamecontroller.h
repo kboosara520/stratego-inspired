@@ -34,9 +34,9 @@ class GameController {
     std::vector<std::unique_ptr<Observer>> observers;
     int turn = 0;
     int findWinner();
-    Move getMove(std::istringstream &s);
-    char getOwnLinkName(std::istringstream &s);
-    Coords getCoords(std::istringstream &s);
+    Move getMove(std::istream &s);
+    char getOwnLinkName(std::istream &s);
+    Coords getCoords(std::istream &s);
   public:
     GameController(
       std::vector<std::string> playerAbilities, 

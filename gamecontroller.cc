@@ -29,10 +29,11 @@ int GameController::findWinner() {
     return -1;
 }
 
-Move GameController::getMove(std::istringstream &s) {
+Move GameController::getMove(std::istream &s) {
     char name;
     char dir;
     s >> name >> dir;
+    if (!s) throw IllegalMoveException{"Invalid input"};
     if (!players[turn]->ownsLink(name)) {
         throw IllegalMoveException{"The player does not own the link"};
     }
@@ -42,7 +43,7 @@ Move GameController::getMove(std::istringstream &s) {
     return {name, dir};
 }
 
-char GameController::getOwnLinkName(std::istringstream &s) {
+char GameController::getOwnLinkName(std::istream &s) {
     char name;
     s >> name;
     if (players[turn]->ownsLink(name)) {
@@ -54,7 +55,7 @@ char GameController::getOwnLinkName(std::istringstream &s) {
     return name;
 }
 
-Coords GameController::getCoords(std::istringstream &s) {
+Coords GameController::getCoords(std::istream &s) {
     int x, y;
     s >> y >> x;
     if (!(x >= 0 && y >= 0 && x < BOARDSIZE && y < BOARDSIZE)) {
@@ -70,19 +71,31 @@ void GameController::runGame() {
     while(getline(*in, line)) {
         std::istringstream s{line};
         s >> command;
-        std::cout << command << std::endl;
+        // std::cout << command << std::endl;
         if (command == "move") {
+            bool fail = false;
             while (true) {
+                Move move;
                 try {
-                    Move move = getMove(s);
+                    if (!fail) move = getMove(s);
+                    else move = getMove(*in);
                     board->move(move.dir, move.name);
+                    if (fail) {
+                        in->clear();
+                        in->ignore();
+                    }
+                    break;
                 } 
-                catch (IllegalMoveException e) {
+                catch (const IllegalMoveException &e) {
+                    s.clear();
+                    s.ignore();
+                    in->clear();
+                    in->ignore();
+                    fail = true;
                     out << e.what() << std::endl;
                     out << "Enter another move: ";
                     continue;
                 }
-                break;
             }
             turn = (turn + 1) % PLAYERCOUNT; // updates whose turn it is
             winner = findWinner();
@@ -114,7 +127,7 @@ void GameController::runGame() {
                 try {
                     board->polarize(name);
                 }
-                catch (IllegalAbilityUseException e) {
+                catch (const IllegalAbilityUseException &e) {
                     out << e.what() << std::endl;
                     continue;
                 }
@@ -124,7 +137,7 @@ void GameController::runGame() {
                 try {
                     name = getOwnLinkName(s);
                 }
-                catch (IllegalAbilityUseException e) {
+                catch (const IllegalAbilityUseException &e) {
                     out << e.what() << std::endl;
                     continue;
                 }
@@ -159,7 +172,7 @@ void GameController::runGame() {
                             break;
                     }
                 }
-                catch (IllegalAbilityUseException e) {
+                catch (const IllegalAbilityUseException &e) {
                     cout << e.what() << std::endl;
                     continue;
                 }
@@ -169,7 +182,7 @@ void GameController::runGame() {
                 try {
                     coords = getCoords(s);
                 }
-                catch (IllegalAbilityUseException e) {
+                catch (const IllegalAbilityUseException &e) {
                     out << e.what() << std::endl;
                     continue;
                 }
