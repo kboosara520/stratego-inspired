@@ -180,11 +180,13 @@ void Board::move(char dir, char link_name){
 
     // check if the link exists
         // check if it's not a nullptrs
-    Link * next = board[p.first][p.second]->getLink(); 
+    Link * next = board[p.first][p.second]->getLink();
     if (!next) {
         Link *link = board[op.first][op.second]->getLink();
         board[op.first][op.second]->setLink(nullptr);
         board[p.first][p.second]->setLink(link);
+        link_map[link_name] = p;
+        board[p.first][p.second]->activate();
     }
 
     else if (turn == board[p.first][p.second]->getLink()->getOwner()){
@@ -205,13 +207,14 @@ void Board::move(char dir, char link_name){
             download(first->getOwner(), second->getName());
             board[op.first][op.second]->setLink(nullptr);
             board[p.first][p.second]->setLink(winner);
+            link_map[link_name] = p;    
+            board[p.first][p.second]->activate();
             if (first->getIsAndOne()) {
                 throw IllegalMoveException{"AND ONE!"};
             }
         }
         else download(second->getOwner(), first->getName());
     }
-    link_map[link_name] = p;
 }
 
 void Board::download(int player, char linkname) {

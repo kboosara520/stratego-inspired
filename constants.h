@@ -33,5 +33,7 @@ const char RIGHT = 'r';
 
 const std::vector<char> FIREWALLNAMES{'m', 'w'};
 const char SERVERPORTNAME{'S'};
+const std::string defaultAbilities = "LFDSP";
+
 
 #endif

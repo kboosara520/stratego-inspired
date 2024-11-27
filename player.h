@@ -8,6 +8,7 @@
 #include <vector>
 #include <random>
 #include <map>
+#include <unordered_map>
 #include <utility>
 #include "constants.h"
 #include "link.h"

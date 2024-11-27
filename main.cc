@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "constants.h"
 #include "gamecontroller.h"
 
 // for 4 players, turn abilities and links into vectors
 
 int main(int argc, char* argv[]) {
     bool graphics = false;
-    std::string defaultAbilities = "LFDSP";
     std::vector<std::string> playerAbilities(PLAYERCOUNT, defaultAbilities);
     std::vector<std::string> linkFiles(PLAYERCOUNT, "");
 
