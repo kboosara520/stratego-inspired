@@ -58,7 +58,7 @@ void Board::debugprint(Board* board){
         for (int j = 0; j < BOARDSIZE; j++){
             bool tel = true;
             for (auto it = link_map.begin(); it != link_map.end(); ++it){ 
-                if(it->second == std::make_pair(i, j)){
+                if (it->second == std::make_pair(i, j)) {
                     std::cout<< "l";
                     tel = false; 
                     break;

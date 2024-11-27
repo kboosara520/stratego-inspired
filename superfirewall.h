@@ -5,9 +5,9 @@
 
 class SuperFireWall: public Decorator {
     int owner;
-    Player *powner;
+    const std::vector<Player *> &players;
     public:
-        SuperFireWall(int owner, std::unique_ptr<Tile> next, Player *player); // just calls decorator constructor
+        SuperFireWall(int owner, std::unique_ptr<Tile> next, const std::vector<Player *> &players); // just calls decorator constructor
         
         // able to detect trojans
         // call next's activate

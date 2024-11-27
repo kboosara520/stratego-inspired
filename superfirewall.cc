@@ -1,6 +1,6 @@
 #include "superfirewall.h"
 
-SuperFireWall::SuperFireWall(int owner, std::unique_ptr<Tile> next, Player *player): Decorator{std::move(next)}, owner{owner}, powner{player} {}
+SuperFireWall::SuperFireWall(int owner, std::unique_ptr<Tile> next, const std::vector<Player *> &players): Decorator{std::move(next)}, owner{owner}, players{players} {}
 
 void SuperFireWall::activate() {
     if (l != nullptr) {
@@ -17,5 +17,5 @@ void SuperFireWall::activate() {
 }
 
 char SuperFireWall::charAt() {
-    next->charAt();
+    return next->charAt();
 }

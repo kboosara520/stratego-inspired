@@ -8,10 +8,10 @@
 class Firewall: public Decorator {
     
     int owner; //index of the player that owns the firewall
-    Player *powner;
+    const std::vector<Player *> &players;
 
     public:
-        Firewall(int owner, std::unique_ptr<Tile> &&next, Player *player);
+        Firewall(int owner, std::unique_ptr<Tile> &&next, const std::vector<Player *> &players);
 
         //should check if there is a link, if owner's link display it, otherwise display firewall. 
         //How to determine char to be displayed for firewall?

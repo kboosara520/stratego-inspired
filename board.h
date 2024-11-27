@@ -35,7 +35,7 @@ class Board: public Subject{
  public:
   explicit Board(const std::vector<std::unique_ptr<Player>> &players, const int &turn);
 
-  char getState(int row, int col ) const override;
+  char getState(int row, int col ) const;
 
   Link * fight(Link * link1, Link * link2); 
   void move(char dir, char link_name); 
@@ -44,7 +44,6 @@ class Board: public Subject{
   void display(int turn); // notifyall
   void download(int player, Link * link); 
   void update(int player, Link * link); 
-  void apply(char abName, int x, int y);
 };
 
 #endif

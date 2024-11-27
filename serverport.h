@@ -6,9 +6,9 @@
 
 class ServerPort: public Decorator {
     int owner; // player index value
-    Player *powner;
+    const std::vector<Player *> &players;
     public:
-        ServerPort(int owner, std::unique_ptr<Tile> next, Player *player); // just calls decorator constructor
+        ServerPort(int owner, std::unique_ptr<Tile> next, const std::vector<Player *> &players); // just calls decorator constructor
         
         // downloads owners link on opponents server port
         void activate() override;

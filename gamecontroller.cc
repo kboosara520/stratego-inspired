@@ -62,7 +62,6 @@ Coords GameController::getCoords() {
 
 void GameController::runGame() {
     std::string command;
-    bool winnerFound = false;
     int winner = -1;
     while(*in >> command) {
         if (command == "move") {
@@ -134,7 +133,6 @@ void GameController::runGame() {
                     continue;
                 }
                 // call board to apply effects
-                board->apply(abPair.first, coords.x, coords.y);
             }
             winner = findWinner();
             if (winner >= 0) break;
