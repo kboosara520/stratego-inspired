@@ -24,9 +24,13 @@ void TextDisp::displayBoard(int turn) {
             // otherwise show as question mark
             char index = 'a' + (i * 4) + j;
             cout << p1Links.at(index)->getName() << " ";
-            if (turn % 2 == 0 || p1Links.at(index)->getIsVisble()) {
+            if (turn % 2 == 0) {
+                cout << p1Links.at(index)->getType() << p1Links.at(index)->getStrength() << " ";
+            } 
+            else if (p1Links.at(index)->getIsVisble()) {
                 cout << p1Links.at(index)->getAppearsAs() << p1Links.at(index)->getStrength() << " ";
-            } else {
+            }
+            else {
                 cout << "?  ";
             }
         }
@@ -49,9 +53,13 @@ void TextDisp::displayBoard(int turn) {
         for (int j = 0; j < BOARDSIZE/2; j++) {
             char index = 'A' + (i * 4) + j;
             cout << p2Links.at(index)->getName() << " ";
-            if (turn % 2 == 1 || p2Links.at(index)->getIsVisble()) {
+             if (turn % 2 == 1) {
                 cout << p2Links.at(index)->getType() << p2Links.at(index)->getStrength() << " ";
-            } else {
+            } 
+            else if (p2Links.at(index)->getIsVisble()) {
+                cout << p2Links.at(index)->getAppearsAs() << p2Links.at(index)->getStrength() << " ";
+            }
+            else {
                 cout << "?  ";
             }
         }

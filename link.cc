@@ -41,11 +41,13 @@ void Link::setMovement(int movement) {
 }
 void Link::setIsTrojan(bool isTrojan) {
     this->isTrojan = isTrojan;
-    if (this->type == VIRUS) {
-        this->appearsAs = DATA;
-    }
-    else {
-        this->appearsAs = VIRUS;
+    if (isTrojan) {
+        if (this->type == VIRUS) {
+            this->appearsAs = DATA;
+        }
+        else {
+            this->appearsAs = VIRUS;
+        }
     }
 }
 

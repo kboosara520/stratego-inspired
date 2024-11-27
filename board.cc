@@ -279,16 +279,8 @@ void Board::make_firewall(int i, int j){
 
 void Board::make_super_firewall(int i, int j){
     char symbol = board[i][j]->charAt();
-    // if (symbol == SERVERPORTNAME) {
-    //     if (turn == 0 && j != 0) {
-    //         throw;
-    //     }
-    //     if (turn == 1 && j != 7) {
-    //         throw;
-    //     }
-    // }
     if ((symbol == SERVERPORTNAME && ((turn == 0 && j != 0) || (turn == 1 && j != 7))) ||
-        symbol != FIREWALLNAMES[turn] ||
+        symbol == FIREWALLNAMES[(turn + 1) % 2] ||
         symbol == '.' || board[i][j]->getLink()){
         throw(IllegalAbilityUseException("Illegal ability use!: Not a serverport or Firewall belonging to the player")); 
     }

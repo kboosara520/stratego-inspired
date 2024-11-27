@@ -115,10 +115,8 @@ void GameController::runGame() {
         else if (command == "ability") {
             int abId;
             s >> abId;
-            if (abId < 1) {
+            if (!s || abId < 1) {
                 out << "Invalid ability ID (1-5)" << std::endl;
-                in->clear();
-                in->ignore();
                 continue;
             }
             --abId; // get the index of the vector
@@ -188,21 +186,21 @@ void GameController::runGame() {
                 Coords coords;
                 try {
                     coords = getCoords(s);
+                    // call board to apply effects
+                    switch (abPair.first) {
+                        case 'F':
+                            board->make_firewall(coords.x,coords.y);
+                            break;
+                        case 'W':
+                            board->make_super_firewall(coords.x, coords.y);
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 catch (const IllegalAbilityUseException &e) {
                     out << e.what() << std::endl;
                     continue;
-                }
-                // call board to apply effects
-                switch (abPair.first) {
-                    case 'F':
-                        board->make_firewall(coords.x,coords.y);
-                        break;
-                    case 'W':
-                        board->make_super_firewall(coords.x, coords.y);
-                        break;
-                    default:
-                        break;
                 }
             }
             players[turn]->useAbility(abId);
