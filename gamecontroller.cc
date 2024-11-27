@@ -93,6 +93,8 @@ void GameController::runGame() {
             *in >> abId;
             if (abId < 1) {
                 out << "Invalid ability ID (1-5)" << std::endl;
+                in->clear();
+                in->ignore();
                 continue;
             }
             --abId; // get the index of the vector
@@ -180,6 +182,7 @@ void GameController::runGame() {
                         break;
                 }
             }
+            players[turn]->useAbility(abId);
             winner = findWinner();
             if (winner >= 0) break;
         }

@@ -54,9 +54,7 @@ Player::Player(int id, std::string abilityList, std::string linkFile): playerId{
 }
 
 void Player::useAbility(int id) {
-    // apply the ability's effect
-    // set the ability's availability to false
-    abilities[id - 1].second = false; 
+    abilities[id].second = false; 
 }
 
 int Player::getPlayerId() const { return playerId; }
