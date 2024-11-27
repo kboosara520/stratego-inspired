@@ -44,3 +44,8 @@ void Link::setIsAndOne(bool isAndOne) {
 void Link::setType(char type) {
     this->type = type;
 }
+
+void Link::polarize() {
+    if (this->type == DATA) this->type == VIRUS;
+    else this->type == DATA;
+}

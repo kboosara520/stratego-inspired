@@ -20,7 +20,9 @@ const std::unordered_map<char, std::string> CHAR2NAME{
     {'T', "Trojan"},
     {'A', "And one"}
 };
-const std::set<char> LINKABILITIES{'L', 'P', 'T', 'A'};
+const char POLARIZE = 'P';
+const std::set<char> OWNLINKABILITIES{'L', 'T', 'A'};
+const std::set<char> OPPLINKABILITIES{'D', 'S'};
 const std::vector<char> LINKNAMES{'a', 'A'};
 const char DATA = 'D';
 const char VIRUS = 'V';

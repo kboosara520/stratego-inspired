@@ -1,6 +1,8 @@
 #ifndef LINK_H
 #define LINK_H
 
+#include "constants.h"
+
 class Link {
     char name;
     char type; //v for virus, d for data
@@ -29,6 +31,7 @@ class Link {
         void setIsTrojan(bool isTrojan);
         void setIsAndOne(bool isAndOne);
         void setType(char type);
+        void polarize();
 };
 
 #endif

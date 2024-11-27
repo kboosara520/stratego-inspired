@@ -39,7 +39,7 @@ Move GameController::getMove() {
     return {name, dir};
 }
 
-char GameController::getLinkName() {
+char GameController::getOwnLinkName() {
     char name;
     *in >> name;
     if (players[turn]->ownsLink(name)) {
@@ -97,30 +97,56 @@ void GameController::runGame() {
                 out << "Ability has been used" << std::endl;
                 continue;
             }
-            if (LINKABILITIES.count(abPair.first) > 0) {
+            if (abPair.first = POLARIZE) {
+                char name;
+                *in >> name;
+                try {
+                    board->polarize(name);
+                }
+                catch (IllegalAbilityUseException e) {
+                    out << e.what() << std::endl;
+                    continue;
+                }
+            }
+            else if (OWNLINKABILITIES.count(abPair.first) > 0) {
                 char name;
                 try {
-                    name = getLinkName();
+                    name = getOwnLinkName();
                 }
                 catch (IllegalAbilityUseException e) {
                     out << e.what() << std::endl;
                     continue;
                 }
                 switch (abPair.first) {
-                    case ('L'):
+                    case 'L':
                         players[turn]->boostLink(name);
                         break;
-                    case ('P'):
-                        players[turn]->polarize(name);
-                        break;
-                    case ('T'):
+                    case 'T':
                         players[turn]->addTrojan(name);
                         break;
-                    case ('A'):
+                    case 'A':
                         players[turn]->addAndOne(name);
                         break;
                     default:
                         break;
+                }
+            }
+            else if (OPPLINKABILITIES.count(abPair.first) > 0) {
+                char name;
+                *in >> name;
+                if (players[turn]->ownsLink(name)) {
+                    out << "Cannot use " << CHAR2NAME.at(abPair.first) << " on your own link" << std::endl;
+                    continue;
+                }
+                try {
+                    switch (abPair.first) {
+                        case 'D':
+                            board->download(turn, name);
+                            break;
+                        case 'S':
+                            board->scan(name);
+                            break;
+                    }
                 }
             }
             else {
@@ -133,6 +159,17 @@ void GameController::runGame() {
                     continue;
                 }
                 // call board to apply effects
+                switch (abPair.first) {
+                    case 'F':
+                        board->make_firewall(coords.x,coords.y);
+                        break;
+                    case 'S':
+                        break;
+                    case 'W':
+                        break;
+                    default:
+                        break;
+                }
             }
             winner = findWinner();
             if (winner >= 0) break;

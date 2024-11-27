@@ -231,3 +231,5 @@ void Board::make_super_firewall(int i, int j){
 void Board::display(int turn){
     notifyObservers(); 
 }
+
+

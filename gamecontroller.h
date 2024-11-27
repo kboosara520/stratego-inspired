@@ -30,7 +30,7 @@ class GameController {
     int turn = 0;
     int findWinner();
     Move getMove();
-    char getLinkName();
+    char getOwnLinkName();
     Coords getCoords();
   public:
     GameController(
