@@ -88,26 +88,25 @@ char Board::getState(int row, int col ) const{
 // ok so link 1 shall always be the aggressor 
 Link* Board::fight(Link * link1, Link * link2){
     // Can't fight own link, need to test whether it's the same link, so
-    for (int i = 0; i < BOARDSIZE; ++i){
-        for (int j = 0; j < BOARDSIZE; ++j){
-                 // find the bloody link
-            if (board[i][j]->getLink() == link2){
-                board[i][j]->setLink(link1); 
-                board[i][j]->activate(); 
+    // for (int i = 0; i < BOARDSIZE; ++i){
+    //     for (int j = 0; j < BOARDSIZE; ++j){
+    //              // find the bloody link
+    //         if (board[i][j]->getLink() == link2){
+    //             board[i][j]->setLink(link1); 
+    //             board[i][j]->activate(); 
 
-                if (board[i][j]->getLink() == nullptr){
-                    board[i][j]->setLink(link2);
-                    return link2; 
-                }
-            }  
-        }
-    }
+    //             if (board[i][j]->getLink() == nullptr){
+    //                 board[i][j]->setLink(link2);
+    //                 return link2; 
+    //             }
+    //         }  
+    //     }
+    // }
     auto win = link1->getStrength() <=> link2->getStrength(); 
     if (win == 0 || win > 0){
         return link1; 
     } 
     return link2; 
-
 }
 
 
@@ -158,9 +157,12 @@ void Board::check_valid_move(char dir, char link_name){
 
 void Board::move(char dir, char link_name){
 
-    std::pair op {0,0}; 
+    std::pair op {0,0};
+    // std::cout << "before getting op" << std::endl;
     op = link_map[link_name]; 
+    // std::cout << "got op" << std::endl;
     int move_dist = board[op.first][op.second]->getLink()->getMovement();
+    // std::cout << "got move dist" << std::endl;
     std::pair p{0,0}; 
     switch(dir){
         case UP:
@@ -172,7 +174,10 @@ void Board::move(char dir, char link_name){
         case RIGHT:
             p = std::make_pair(op.first + move_dist, op.second); break; 
     }
+    // std::cout << "before check" << std::endl;
     check_valid_move(dir, link_name); 
+    // std::cout << "after check" << std::endl;
+    // std::cout << "p: (" << p.first << ", " << p.second << ")" << std::endl;
 
     // check if the next move will cause it to download the link (currently will download anything lolololol)
     if (p.first < 0 || p.first > 7){
@@ -183,6 +188,7 @@ void Board::move(char dir, char link_name){
     // check if the link exists
         // check if it's not a nullptrs
     Link * next = board[p.first][p.second]->getLink(); 
+    std::cout << "here" << std::endl;
     if (!next) {
         Link *link = board[op.first][op.second]->getLink();
         board[op.first][op.second]->setLink(nullptr);
@@ -201,9 +207,17 @@ void Board::move(char dir, char link_name){
     // not sure how to check if it's a firewall or a superfireall
 
     else {
-        fight(board[p.first][p.second]->getLink(),next); // should update the thing accordingly. 
+        Link *first = board[op.first][op.second]->getLink();
+        Link *second = next;
+        Link *winner = fight(first, second); // should update the thing accordingly. 
+        if (winner == first) {
+            download(first->getOwner(), second->getName());
+            board[op.first][op.second]->setLink(nullptr);
+            board[p.first][p.second]->setLink(winner);
+        }
+        else download(second->getOwner(), first->getName());
     }
-
+    link_map[link_name] = p;
 }
 
 void Board::download(int player, char linkname) {
