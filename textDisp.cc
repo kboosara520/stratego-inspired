@@ -62,18 +62,7 @@ void TextDisp::displayBoard(int turn) {
             else {
                 cout << "?  ";
             }
-            //  if (turn % 2 == 0) {
-            //     cout << p1Links.at(index)->getType() << p1Links.at(index)->getStrength() << " ";
-            // } 
-            // else if (p1Links.at(index)->getIsVisble()) {
-            //     cout << p1Links.at(index)->getAppearsAs() << p1Links.at(index)->getStrength() << " ";
-            // }
-            // else {
-            //     cout << "?  ";
-            // }
-
         }
         cout << endl;
     }
-    // ticks += 1;
 }

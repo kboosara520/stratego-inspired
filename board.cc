@@ -85,23 +85,8 @@ char Board::getState(int row, int col ) const{
     return board[row][col]->charAt(); 
 }
 
-// ok so link 1 shall always be the aggressor 
+// link 1 shall always be the aggressor 
 Link* Board::fight(Link * link1, Link * link2){
-    // Can't fight own link, need to test whether it's the same link, so
-    // for (int i = 0; i < BOARDSIZE; ++i){
-    //     for (int j = 0; j < BOARDSIZE; ++j){
-    //              // find the bloody link
-    //         if (board[i][j]->getLink() == link2){
-    //             board[i][j]->setLink(link1); 
-    //             board[i][j]->activate(); 
-
-    //             if (board[i][j]->getLink() == nullptr){
-    //                 board[i][j]->setLink(link2);
-    //                 return link2; 
-    //             }
-    //         }  
-    //     }
-    // }
     auto win = link1->getStrength() <=> link2->getStrength(); 
     if (win == 0 || win > 0){
         return link1; 
@@ -131,7 +116,7 @@ void Board::check_valid_move(char dir, char link_name){
         // To do that I need to know which direction it's allowed to move off the board 
         // so I need to know the owner 
         // Player 1 (0) is at the top so the server ports 
-        // Player 2 (1) 
+        // Player 2 (1) is at the bottom
     switch(turn){
         case 0:
             if (p.first < 0 || p.first > 7){
@@ -180,7 +165,7 @@ void Board::move(char dir, char link_name){
 
 
     // check if the link exists
-        // check if it's not a nullptrs
+    // check if it's not a nullptr
     Link * next = board[p.first][p.second]->getLink();
     if (!next) {
         Link *link = board[op.first][op.second]->getLink();
@@ -197,9 +182,8 @@ void Board::move(char dir, char link_name){
         throw IllegalMoveException{message};
     }
 
-    // so we established that i'ts not out of bounds and that the next link is not one of our own. 
+    // so we established that it's not out of bounds and that the next link is not one of our own. 
     // 3. check if the there is a link, and fight it 
-    // not sure how to check if it's a firewall or a superfireall
 
     else {
         Link *first = board[op.first][op.second]->getLink();
@@ -219,8 +203,7 @@ void Board::move(char dir, char link_name){
     }
 }
 
-void Board::download(int player, char linkname) {
-    // check that 
+void Board::download(int player, char linkname) { 
     if (link_map.count(linkname) <= 0) {
         throw IllegalAbilityUseException{"Illegal ability use!: Link does not exist"};
     }
@@ -251,23 +234,18 @@ void Board::scan(char linkname) {
 
 
 void Board::polarize(char linkname) {
-    // check 
     if (!link_map.count(linkname)){
         throw(IllegalAbilityUseException("Illegal ability use!: Link does not exist")); 
     }
     std::pair<int, int> p = link_map.at(linkname); 
-    // check if it's dead
     if (board[p.first][p.second]->getLink()){
         throw(IllegalAbilityUseException("Illegal ability use!: Link is dead!"));
     }
-    //check if it's alive and it exists 
     board[p.first][p.second]->getLink()->polarize(); 
 }
 
 
 void Board::make_firewall(int i, int j){
-
-    // checks if it's null
     if (board[i][j]->getLink() || (board[i][j]->charAt() == SERVERPORTNAME) ||
      board[i][j]->charAt() == FIREWALLNAMES[0] ||
       board[i][j]->charAt() == FIREWALLNAMES[1]) {
@@ -285,7 +263,7 @@ void Board::make_super_firewall(int i, int j){
         throw(IllegalAbilityUseException("Illegal ability use!: Not a serverport or Firewall belonging to the player")); 
     }
  
-    board[i][j] = std::make_unique<SuperFireWall>(turn, std::move(board[i][j]), players); 
+    board[i][j] = std::make_unique<SuperFireWall>(turn, std::move(board[i][j])); 
 }
 
 void Board::display(int turn){

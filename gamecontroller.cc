@@ -71,7 +71,6 @@ void GameController::runGame() {
     while(getline(*in, line)) {
         std::istringstream s{line};
         s >> command;
-        // std::cout << command << std::endl;
         if (command == "move") {
             bool fail = false;
             while (true) {
