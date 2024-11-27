@@ -10,7 +10,6 @@ TextDisp::~TextDisp(){
 void TextDisp::displayBoard() {
     
     // MAY NEED TO CHECK IF ITS A TROJAN, HAVE A DIFFERENT OUTPUT
-
     // have a method that returns a reference to the links owned by the player
     auto &p1Links = players[0]->getLinks(); //std::map<char,std::unique_ptr<Link>> links;
     auto &p2Links = players[1]->getLinks();
@@ -18,12 +17,12 @@ void TextDisp::displayBoard() {
     cout << "Downloaded: " << players[0]->getData() << "D, " << players[0]->getVirus() <<"V" << endl;
     cout << "Abilities: " << players[0]->getAbilityCount() << endl;
 
-    for (int i = 0; i < BOARDSIZE/2; i++) {
+    for (int i = 0; i < BOARDSIZE/4; i++) {
         for (int j = 0; j < BOARDSIZE/2; j++) {
             
             // if its player 1's turn or the piece is visible, display piece
             // otherwise show as question mark
-            char index = 'A' + i + j;
+            char index = 'a' + (i * 4) + j;
             cout << p1Links.at(index)->getName() << " ";
             if (ticks % 2 == 0 || p1Links.at(index)->getIsVisble()) {
                 cout << p1Links.at(index)->getType() << p1Links.at(index)->getStrength() << " ";
@@ -37,7 +36,7 @@ void TextDisp::displayBoard() {
     cout << "========" << endl;
     for (int i = 0; i < BOARDSIZE; i++) {
         for (int j = 0; j < BOARDSIZE; j++) {
-            cout << board->getState(i, j);
+            cout << board->getState(j, i);
         }
         cout << endl;
     }
@@ -46,9 +45,9 @@ void TextDisp::displayBoard() {
     cout << "Downloaded: " << players[1]->getData() << "D, " << players[1]->getVirus() <<"V" << endl;
     cout << "Abilities: " << players[1]->getAbilityCount() << endl;
 
-    for (int i = 0; i < BOARDSIZE/2; i++) {
+    for (int i = 0; i < BOARDSIZE/4; i++) {
         for (int j = 0; j < BOARDSIZE/2; j++) {
-            char index = 'a' + i + j;
+            char index = 'A' + (i * 4) + j;
             cout << p2Links.at(index)->getName() << " ";
             if (ticks % 2 == 1 || p2Links.at(index)->getIsVisble()) {
                 cout << p2Links.at(index)->getType() << p2Links.at(index)->getStrength() << " ";

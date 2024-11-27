@@ -31,7 +31,7 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, const int &tur
                     this->link_map.emplace('a'+i , std::pair<int, int>{i,j+1}); 
                 } else if (j == 7){
                     board[i][j] = std::make_unique<ServerPort>(1 , std::move(board[i][j]), this->players);
-                    this->link_map.emplace('A'+i , std::pair<int, int>{i,j+1}); 
+                    this->link_map.emplace('A'+i , std::pair<int, int>{i,j - 1}); 
                 }
             } else {
                 // 2. put a link on the link map if it's between 0 and 7 
@@ -43,13 +43,19 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, const int &tur
             }
         }
     }
+    for (auto &player: players) {
+        for (auto &link: player->getLinks()) {
+            std::pair<int, int> coords = link_map[link.first];
+            board[coords.first][coords.second]->setLink(link.second.get());
+        }
+    }
 }
 
 bool Board::isServer(int i, int j) {
     return (i == 3 && j == 0) || 
             (i == 4 && j == 0) ||
             (i == 3 && j == 7) ||
-            (i == 3 && j == 7);
+            (i == 4 && j == 7);
 }
 
 
@@ -152,24 +158,39 @@ void Board::check_valid_move(char dir, char link_name){
 
 void Board::move(char dir, char link_name){
 
-    std::pair op = link_map[link_name]; 
+    std::pair op {0,0}; 
+    op = link_map[link_name]; 
     int move_dist = board[op.first][op.second]->getLink()->getMovement();
-    int owner = board[op.first][op.second]->getLink()->getOwner(); 
     std::pair p{0,0}; 
+    switch(dir){
+        case UP:
+            p = std::make_pair(op.first, op.second - move_dist); break; 
+        case DOWN:
+            p = std::make_pair(op.first, op.second + move_dist); break; 
+        case LEFT:
+            p = std::make_pair(op.first - move_dist, op.second); break; 
+        case RIGHT:
+            p = std::make_pair(op.first + move_dist, op.second); break; 
+    }
+    check_valid_move(dir, link_name); 
 
     // check if the next move will cause it to download the link (currently will download anything lolololol)
     if (p.first < 0 || p.first > 7){
-        download(owner, link_name); 
-        display(owner); 
+        download(turn, link_name); 
     }
 
 
     // check if the link exists
         // check if it's not a nullptrs
-    Link * next = board[op.first][op.second]->getLink(); 
+    Link * next = board[p.first][p.second]->getLink(); 
+    if (!next) {
+        Link *link = board[op.first][op.second]->getLink();
+        board[op.first][op.second]->setLink(nullptr);
+        board[p.first][p.second]->setLink(link);
+    }
 
-    if (!next && owner == board[op.first][op.second]->getLink()->getOwner()){
-        int index = owner + 1;
+    else if (turn == board[p.first][p.second]->getLink()->getOwner()){
+        int index = turn + 1;
         std::string message = "Player " + std::to_string(index) + " has made an illegal move";
         // message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
         throw(IllegalMoveException(message));
@@ -179,7 +200,7 @@ void Board::move(char dir, char link_name){
     // 3. check if the there is a link, and fight it 
     // not sure how to check if it's a firewall or a superfireall
 
-    if (next){
+    else {
         fight(board[p.first][p.second]->getLink(),next); // should update the thing accordingly. 
     }
 
@@ -200,6 +221,19 @@ void Board::download(int player, char linkname) {
     if (type == VIRUS) players[player]->setVirus(players[player]->getVirus() + 1);
     else players[player]->setData(players[player]->getData() + 1);
     tile->setLink(nullptr);
+}
+
+void Board::scan(char linkname) {
+    if (link_map.count(linkname) <= 0) {
+        throw IllegalAbilityUseException{"Illegal ability use!: Link does not exist"};
+    }
+    std::pair<int, int> coords = link_map[linkname];
+    Tile *tile = board[coords.first][coords.second].get();
+    Link *link = tile->getLink();
+    if (link->getIsDead()) {
+        throw IllegalAbilityUseException{"Illegal ability use!: Link is dead!"};
+    }
+    link->setIsVisble(true);
 }
 
 
@@ -244,5 +278,3 @@ void Board::make_super_firewall(int i, int j){
 void Board::display(int turn){
     notifyObservers(); 
 }
-
-

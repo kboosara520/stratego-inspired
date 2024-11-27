@@ -4,8 +4,11 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
     players.reserve(PLAYERCOUNT);
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         players.emplace_back(std::make_unique<Player>(i, playerAbilities[i], linkFiles[i]));
+        rplayers.emplace_back(players[i].get());
     }
     board = std::make_unique<Board>(players, turn);
+    observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
+
 }
 
 int GameController::findWinner() {
@@ -69,7 +72,8 @@ void GameController::runGame() {
                 try {
                     Move move = getMove();
                     board->move(move.dir, move.name);
-                } catch (IllegalMoveException e) {
+                } 
+                catch (IllegalMoveException e) {
                     out << e.what() << std::endl;
                     out << "Enter another move: ";
                     continue;
@@ -79,6 +83,7 @@ void GameController::runGame() {
             turn = (turn + 1) % PLAYERCOUNT; // updates whose turn it is
             winner = findWinner();
             if (winner >= 0) break;
+            board->display(turn);
         }
         else if (command == "abilities") {
             out << players[turn]->getAbilities() << std::endl;
@@ -97,7 +102,7 @@ void GameController::runGame() {
                 out << "Ability has been used" << std::endl;
                 continue;
             }
-            if (abPair.first = POLARIZE) {
+            if (abPair.first == POLARIZE) {
                 char name;
                 *in >> name;
                 try {

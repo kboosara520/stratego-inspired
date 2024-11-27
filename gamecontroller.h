@@ -9,6 +9,8 @@
 #include "board.h"
 #include "constants.h"
 #include "player.h"
+#include "textDisp.h"
+#include "observer.h"
 #include "illegalmoveexception.h"
 #include "illegalabilityuseexception.h"
 
@@ -26,7 +28,9 @@ class GameController {
     std::ifstream file;
     std::ostream &out;
     std::vector<std::unique_ptr<Player>> players;
+    std::vector<Player *> rplayers;
     std::unique_ptr<Board> board;
+    std::vector<std::unique_ptr<Observer>> observers;
     int turn = 0;
     int findWinner();
     Move getMove();

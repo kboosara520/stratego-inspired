@@ -20,7 +20,7 @@ class Player {
     std::vector<std::pair<char, bool>> abilities;
 
     const int playerId;
-    int abilityCount;
+    int abilityCount = 5;
     int data = 0;
     int virus = 0;
     bool active = true;
