@@ -157,11 +157,8 @@ void Board::check_valid_move(char dir, char link_name){
 void Board::move(char dir, char link_name){
 
     std::pair op {0,0};
-    // std::cout << "before getting op" << std::endl;
     op = link_map[link_name]; 
-    // std::cout << "got op" << std::endl;
     int move_dist = board[op.first][op.second]->getLink()->getMovement();
-    // std::cout << "got move dist" << std::endl;
     std::pair p{0,0}; 
     switch(dir){
         case UP:
@@ -173,10 +170,7 @@ void Board::move(char dir, char link_name){
         case RIGHT:
             p = std::make_pair(op.first + move_dist, op.second); break; 
     }
-    // std::cout << "before check" << std::endl;
     check_valid_move(dir, link_name); 
-    // std::cout << "after check" << std::endl;
-    // std::cout << "p: (" << p.first << ", " << p.second << ")" << std::endl;
 
     // check if the next move will cause it to download the link (currently will download anything lolololol)
     if (p.first < 0 || p.first > 7){
@@ -196,8 +190,7 @@ void Board::move(char dir, char link_name){
     else if (turn == board[p.first][p.second]->getLink()->getOwner()){
         int index = turn + 1;
         std::string message = "Player " + std::to_string(index) + " has made an illegal move";
-        // message += " has made an illegal move: "; // looks dumb I know but it gets rid of the red squiggly line
-        throw(IllegalMoveException(message));
+        throw IllegalMoveException{message};
     }
 
     // so we established that i'ts not out of bounds and that the next link is not one of our own. 
@@ -275,8 +268,7 @@ void Board::make_firewall(int i, int j){
       board[i][j]->charAt() == FIREWALLNAMES[1]) {
         throw(IllegalAbilityUseException("Illegal ability use!: Firewall")); 
     }
-
-    // if (!board[i][j]->getLink()) std::cout << "null" << std::endl;
+    
     board[i][j] = std::make_unique<Firewall>(turn, std::move(board[i][j]), players);
 }
 
