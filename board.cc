@@ -187,14 +187,39 @@ void Board::move(char dir, char link_name){
 
 void Board::download(int player, Link * link) {
     // check that 
-    cout<<"help"; 
+    players[player]
+
+
 }
 
 
+void Board::polarize(char linkname) const{
+    // check 
+    if (!link_map.count(linkname)){
+        throw(IllegalAbilityUseException("Illegal ability use!: Link does not exist")); 
+    }
+    std::pair<int, int> p = link_map.at(linkname); 
+    // check if it's dead
+    if (board[p.first][p.second]->getLink()){
+        throw(IllegalAbilityUseException("Illegal ability use!: Link is dead!"));
+    }
+    //check if it's alive and it exists 
+    board[p.first][p.second]->getLink()->polarize(); 
+}
+
 
 void Board::make_firewall(int i, int j){
+    if (board[i][j]->charAt() != SERVERPORTNAME || board[i][j]->charAt() != FIREWALLNAMES[0] || board[i][j]->charAt() != FIREWALLNAMES[1]){
+        throw(IllegalAbilityUseException("Illegal ability use!: Not a serverport or ")); 
+    }
+    // check if it's valid 
+    if 
+
+    // check if it's your own firewall 
+    if not throw excpetion 
+
+
     int owner = board[i][j]->getLink()->getOwner(); 
-    // board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players[owner]); 
     board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players);
 }
 

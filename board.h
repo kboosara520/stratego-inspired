@@ -7,6 +7,7 @@
 #include <vector>
 #include <compare>
 #include "illegalmoveexception.h"
+#include "illegalabilityuseexception.h"
 #include "subject.h"
 #include "player.h"
 #include "tile.h"
@@ -42,7 +43,8 @@ class Board: public Subject{
   void make_firewall(int i, int j); 
   void make_super_firewall(int i, int j); 
   void display(int turn); // notifyall
-  void download(int player, Link * link); 
+  void download(int player, char linkname); 
+  void polarize(char linkname) const; 
   void update(int player, Link * link); 
 };
 
