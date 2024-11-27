@@ -7,7 +7,7 @@ TextDisp::TextDisp(Board * board, std::vector<Player *> players): board{board}, 
 TextDisp::~TextDisp(){
     board->detach(this);
 }
-void TextDisp::displayBoard() {
+void TextDisp::displayBoard(int turn) {
     
     // MAY NEED TO CHECK IF ITS A TROJAN, HAVE A DIFFERENT OUTPUT
     // have a method that returns a reference to the links owned by the player
@@ -24,7 +24,7 @@ void TextDisp::displayBoard() {
             // otherwise show as question mark
             char index = 'a' + (i * 4) + j;
             cout << p1Links.at(index)->getName() << " ";
-            if (ticks % 2 == 0 || p1Links.at(index)->getIsVisble()) {
+            if (turn % 2 == 0 || p1Links.at(index)->getIsVisble()) {
                 cout << p1Links.at(index)->getType() << p1Links.at(index)->getStrength() << " ";
             } else {
                 cout << "?  ";
@@ -49,7 +49,7 @@ void TextDisp::displayBoard() {
         for (int j = 0; j < BOARDSIZE/2; j++) {
             char index = 'A' + (i * 4) + j;
             cout << p2Links.at(index)->getName() << " ";
-            if (ticks % 2 == 1 || p2Links.at(index)->getIsVisble()) {
+            if (turn % 2 == 1 || p2Links.at(index)->getIsVisble()) {
                 cout << p2Links.at(index)->getType() << p2Links.at(index)->getStrength() << " ";
             } else {
                 cout << "?  ";
@@ -57,5 +57,5 @@ void TextDisp::displayBoard() {
         }
         cout << endl;
     }
-    ticks += 1;
+    // ticks += 1;
 }

@@ -3,7 +3,7 @@
 
 class Observer {
  public:
-  virtual void displayBoard() = 0; 
+  virtual void displayBoard(int turn) = 0; 
   virtual ~Observer() = default;
 };
 

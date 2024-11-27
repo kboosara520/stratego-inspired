@@ -8,10 +8,9 @@ class TextDisp: public Observer {
         // any private fields 
         Board* board;
         std::vector<Player *> players;
-        int ticks = 0; 
     public:
         //constructor 
         TextDisp(Board * board, std::vector<Player *> players); 
         ~TextDisp();
-        void displayBoard(); 
+        void displayBoard(int turn); 
 };

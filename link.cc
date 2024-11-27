@@ -24,6 +24,9 @@ bool Link::getIsDead() {
 bool Link::getIsVisble() {
     return isVisible;
 }
+bool Link::getIsAndOne() {
+    return isAndOne;
+}
 void Link::setIsVisble(bool isVisible) {
     this->isVisible = isVisible;
 }

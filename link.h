@@ -25,6 +25,7 @@ class Link {
         bool getIsTrojan();
         bool getIsDead();
         bool getIsVisble();
+        bool getIsAndOne();
         void setIsVisble(bool isVisible);
         void setIsDead(bool isDead);
         void setMovement(int movement);

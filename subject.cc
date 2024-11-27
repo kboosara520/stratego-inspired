@@ -13,9 +13,9 @@ void Subject::detach(Observer *o) {  // Remove from observers
     }
 }
 
-void Subject::notifyObservers() const {
+void Subject::notifyObservers(int turn) const {
     for (auto o : observers) {
-        o->displayBoard();
+        o->displayBoard(turn);
     }
 }
 

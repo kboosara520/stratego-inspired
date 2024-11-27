@@ -64,13 +64,13 @@ Coords GameController::getCoords() {
 }
 
 void GameController::runGame() {
-    int i = 0;
+    // int i = 0;
     std::string command;
     int winner = -1;
     while(*in >> command) {
         if (command == "move") {
             while (true) {
-                std::cout << i << std::endl;
+                // std::cout << i << std::endl;
                 try {
                     Move move = getMove();
                     // out << "about to move" << std::endl;
@@ -85,7 +85,7 @@ void GameController::runGame() {
                 break;
             }
             turn = (turn + 1) % PLAYERCOUNT; // updates whose turn it is
-            i++;
+            // i++;
             // out << "hello" << endl;
             winner = findWinner();
             // out << "world" << endl;

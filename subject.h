@@ -8,7 +8,7 @@ class Subject {
  public:
   void attach( Observer* o );
   void detach( Observer* o );
-  void notifyObservers() const;
+  void notifyObservers(int turn) const;
 
   virtual ~Subject() = default;
 };

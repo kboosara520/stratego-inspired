@@ -115,17 +115,16 @@ void Board::check_valid_move(char dir, char link_name){
     std::pair op {0,0}; 
     op = link_map[link_name]; 
     int move_dist = board[op.first][op.second]->getLink()->getMovement();
-    int owner = board[op.first][op.second]->getLink()->getOwner(); 
     std::pair p{0,0}; 
     switch(dir){
         case UP:
-            p = std::make_pair(p.first, p.second - move_dist); break; 
+            p = std::make_pair(op.first, op.second - move_dist); break; 
         case DOWN:
-            p = std::make_pair(p.first, p.second + move_dist); break; 
+            p = std::make_pair(op.first, op.second + move_dist); break; 
         case LEFT:
-            p = std::make_pair(p.first - move_dist, p.second); break; 
+            p = std::make_pair(op.first - move_dist, op.second); break; 
         case RIGHT:
-            p = std::make_pair(p.first + move_dist, p.second); break; 
+            p = std::make_pair(op.first + move_dist, op.second); break; 
     }
 
     // 2. check the tiles movement range 
@@ -133,7 +132,7 @@ void Board::check_valid_move(char dir, char link_name){
         // so I need to know the owner 
         // Player 1 (0) is at the top so the server ports 
         // Player 2 (1) 
-    switch(owner){
+    switch(turn){
         case 0:
             if (p.first < 0 || p.first > 7){
                 throw(IllegalMoveException("Player 1 has made an illegal move: exiting the left or right boundaries of the board"));
@@ -188,7 +187,6 @@ void Board::move(char dir, char link_name){
     // check if the link exists
         // check if it's not a nullptrs
     Link * next = board[p.first][p.second]->getLink(); 
-    std::cout << "here" << std::endl;
     if (!next) {
         Link *link = board[op.first][op.second]->getLink();
         board[op.first][op.second]->setLink(nullptr);
@@ -214,6 +212,9 @@ void Board::move(char dir, char link_name){
             download(first->getOwner(), second->getName());
             board[op.first][op.second]->setLink(nullptr);
             board[p.first][p.second]->setLink(winner);
+            if (first->getIsAndOne()) {
+                throw IllegalMoveException{"AND ONE!"};
+            }
         }
         else download(second->getOwner(), first->getName());
     }
@@ -268,15 +269,15 @@ void Board::polarize(char linkname) {
 
 void Board::make_firewall(int i, int j){
 
-    // checks if it's 
-    if (board[i][j]->getLink() || board[i][j]->charAt() == SERVERPORTNAME ||
+    // checks if it's null
+    if (board[i][j]->getLink() || (board[i][j]->charAt() == SERVERPORTNAME) ||
      board[i][j]->charAt() == FIREWALLNAMES[0] ||
       board[i][j]->charAt() == FIREWALLNAMES[1]) {
         throw(IllegalAbilityUseException("Illegal ability use!: Firewall")); 
     }
 
-    int owner = board[i][j]->getLink()->getOwner(); 
-    board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players);
+    // if (!board[i][j]->getLink()) std::cout << "null" << std::endl;
+    board[i][j] = std::make_unique<Firewall>(turn, std::move(board[i][j]), players);
 }
 
 void Board::make_super_firewall(int i, int j){
@@ -290,5 +291,5 @@ void Board::make_super_firewall(int i, int j){
 }
 
 void Board::display(int turn){
-    notifyObservers(); 
+    notifyObservers(turn); 
 }
