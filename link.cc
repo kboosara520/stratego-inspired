@@ -1,10 +1,13 @@
 #include "link.h"
-Link::Link(char name, char type, int strength, int owner, int movement, bool isVisible, bool isDead, bool isTrojan, bool isAndOne):name{name}, type{type}, strength{strength}, movement{movement}, owner{owner}, isVisible{isVisible}, isDead{isDead}, isTrojan{isTrojan}, isAndOne{isAndOne}{}
+Link::Link(char name, char type, int strength, int owner, int movement, bool isVisible, bool isDead, bool isTrojan, bool isAndOne):name{name}, type{type}, appearsAs{type}, strength{strength}, movement{movement}, owner{owner}, isVisible{isVisible}, isDead{isDead}, isTrojan{isTrojan}, isAndOne{isAndOne}{}
 char Link::getName() {
     return name;
 }
 char Link::getType() {
     return type;
+}
+char Link::getAppearsAs() {
+    return appearsAs;
 }
 int Link::getOwner() {
     return owner;
@@ -38,6 +41,16 @@ void Link::setMovement(int movement) {
 }
 void Link::setIsTrojan(bool isTrojan) {
     this->isTrojan = isTrojan;
+    if (this->type == VIRUS) {
+        this->appearsAs = DATA;
+    }
+    else {
+        this->appearsAs = VIRUS;
+    }
+}
+
+void Link::superReveal() {
+    this->appearsAs = this->type;
 }
 
 void Link::setIsAndOne(bool isAndOne) {

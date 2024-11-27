@@ -46,7 +46,7 @@ Move GameController::getMove(std::istream &s) {
 char GameController::getOwnLinkName(std::istream &s) {
     char name;
     s >> name;
-    if (players[turn]->ownsLink(name)) {
+    if (!players[turn]->ownsLink(name)) {
         throw IllegalAbilityUseException{"The player does not own the link"};
     }
     if (players[turn]->linkIsDead(name)) {
@@ -75,25 +75,32 @@ void GameController::runGame() {
         if (command == "move") {
             bool fail = false;
             while (true) {
-                Move move;
+                char andOneName = '0';
                 try {
-                    if (!fail) move = getMove(s);
-                    else move = getMove(*in);
-                    board->move(move.dir, move.name);
                     if (fail) {
-                        in->clear();
-                        in->ignore();
+                        s.clear();
+                        s.str(line);
                     }
+                    Move move = getMove(s);
+                    if (andOneName != '0' && move.name != andOneName) {
+                        throw IllegalAbilityUseException{"Must move the same link"};
+                    }
+                    board->move(move.dir, move.name);
                     break;
                 } 
                 catch (const IllegalMoveException &e) {
-                    s.clear();
-                    s.ignore();
-                    in->clear();
-                    in->ignore();
+                    std::string msg = e.what();
+                    if (msg.size() == 1) {
+                        board->display(turn);
+                        std::cout << "AND ONE!" << std::endl;
+                        andOneName = msg[0];
+                    }
+                    else {
+                        out << e.what() << std::endl;
+                    }
                     fail = true;
-                    out << e.what() << std::endl;
-                    out << "Enter another move: ";
+                    out << "Enter another move: " << std::endl;
+                    getline(*in, line);
                     continue;
                 }
             }
@@ -191,9 +198,8 @@ void GameController::runGame() {
                     case 'F':
                         board->make_firewall(coords.x,coords.y);
                         break;
-                    case 'S':
-                        break;
                     case 'W':
+                        board->make_super_firewall(coords.x, coords.y);
                         break;
                     default:
                         break;
@@ -225,6 +231,7 @@ void GameController::runGame() {
         }
     }
     if (winner >= 0) {
+        board->display(turn);
         out << "Player " << winner + 1 << " wins" << std::endl;
     }
 }

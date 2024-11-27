@@ -25,7 +25,7 @@ void TextDisp::displayBoard(int turn) {
             char index = 'a' + (i * 4) + j;
             cout << p1Links.at(index)->getName() << " ";
             if (turn % 2 == 0 || p1Links.at(index)->getIsVisble()) {
-                cout << p1Links.at(index)->getType() << p1Links.at(index)->getStrength() << " ";
+                cout << p1Links.at(index)->getAppearsAs() << p1Links.at(index)->getStrength() << " ";
             } else {
                 cout << "?  ";
             }

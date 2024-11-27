@@ -148,7 +148,7 @@ void Board::check_valid_move(char dir, char link_name){
             } else if (p.second >= 6 && (p.first == 3 || p.first == 4)){
                 throw(IllegalMoveException("Player 2 has made an illegal move: going on it's own server port")); 
             } else if (p.second > 7){
-                throw(IllegalMoveException("Player 2 has made an illegal move: "));
+                throw(IllegalMoveException("Player 2 has made an illegal move: going back to it's own bay"));
             }
             break;
     }
@@ -173,8 +173,9 @@ void Board::move(char dir, char link_name){
     check_valid_move(dir, link_name); 
 
     // check if the next move will cause it to download the link (currently will download anything lolololol)
-    if (p.first < 0 || p.first > 7){
+    if (p.second < 0 || p.second > 7){
         download(turn, link_name); 
+        return;
     }
 
 
@@ -190,6 +191,7 @@ void Board::move(char dir, char link_name){
     }
 
     else if (turn == board[p.first][p.second]->getLink()->getOwner()){
+        std::cout << "this condition" << std::endl;
         int index = turn + 1;
         std::string message = "Player " + std::to_string(index) + " has made an illegal move";
         throw IllegalMoveException{message};
@@ -210,7 +212,7 @@ void Board::move(char dir, char link_name){
             link_map[link_name] = p;    
             board[p.first][p.second]->activate();
             if (first->getIsAndOne()) {
-                throw IllegalMoveException{"AND ONE!"};
+                throw IllegalMoveException{std::string(1, first->getName())};
             }
         }
         else download(second->getOwner(), first->getName());
@@ -276,13 +278,22 @@ void Board::make_firewall(int i, int j){
 }
 
 void Board::make_super_firewall(int i, int j){
-    if (board[i][j]->charAt() != SERVERPORTNAME ||
-        board[i][j]->charAt() != FIREWALLNAMES[turn]){
+    char symbol = board[i][j]->charAt();
+    // if (symbol == SERVERPORTNAME) {
+    //     if (turn == 0 && j != 0) {
+    //         throw;
+    //     }
+    //     if (turn == 1 && j != 7) {
+    //         throw;
+    //     }
+    // }
+    if ((symbol == SERVERPORTNAME && ((turn == 0 && j != 0) || (turn == 1 && j != 7))) ||
+        symbol != FIREWALLNAMES[turn] ||
+        symbol == '.' || board[i][j]->getLink()){
         throw(IllegalAbilityUseException("Illegal ability use!: Not a serverport or Firewall belonging to the player")); 
     }
-
-    int owner = board[i][j]->getLink()->getOwner(); 
-    board[i][j] = std::make_unique<SuperFireWall>(owner, std::move(board[i][j]), players); 
+ 
+    board[i][j] = std::make_unique<SuperFireWall>(turn, std::move(board[i][j]), players); 
 }
 
 void Board::display(int turn){

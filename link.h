@@ -6,6 +6,7 @@
 class Link {
     char name;
     char type; //v for virus, d for data
+    char appearsAs;
     int strength;
     int movement;
     int owner; // uses players index in GameController
@@ -19,6 +20,7 @@ class Link {
         Link(char name, char type, int strength, int owner, int movement = 1, bool isVisible = false, bool isDead = false, bool isTrojan = false, bool isAndOne = false);
         char getName();
         char getType();
+        char getAppearsAs();
         int getOwner();
         int getMovement();
         int getStrength();
@@ -33,6 +35,7 @@ class Link {
         void setIsAndOne(bool isAndOne);
         void setType(char type);
         void polarize();
+        void superReveal();
 };
 
 #endif
