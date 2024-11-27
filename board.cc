@@ -27,10 +27,10 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, const int &tur
                 // 2. decorate it with a server port                 
                 // set the link on the link map as desired 
                 if (j == 0){
-                    board[i][j] = std::make_unique<ServerPort>(0 , std::move(board[i][j]), players[0].get());
+                    board[i][j] = std::make_unique<ServerPort>(0 , std::move(board[i][j]), this->players);
                     this->link_map.emplace('a'+i , std::pair<int, int>{i,j+1}); 
                 } else if (j == 7){
-                    board[i][j] = std::make_unique<ServerPort>(1 , std::move(board[i][j]), players[1].get());
+                    board[i][j] = std::make_unique<ServerPort>(1 , std::move(board[i][j]), this->players);
                     this->link_map.emplace('A'+i , std::pair<int, int>{i,j+1}); 
                 }
             } else {
@@ -190,12 +190,12 @@ void Board::move(char dir, char link_name){
 void Board::make_firewall(int i, int j){
     int owner = board[i][j]->getLink()->getOwner(); 
     // board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players[owner]); 
-    board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players[owner]);
+    board[i][j] = std::make_unique<Firewall>(owner, std::move(board[i][j]), players);
 }
 
 void Board::make_super_firewall(int i, int j){
     int owner = board[i][j]->getLink()->getOwner(); 
-    board[i][j] = std::make_unique<SuperFireWall>(owner, std::move(board[i][j]), players[owner]); 
+    board[i][j] = std::make_unique<SuperFireWall>(owner, std::move(board[i][j]), players); 
 }
 
 void Board::display(int turn){

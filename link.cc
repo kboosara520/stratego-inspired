@@ -1,5 +1,5 @@
 #include "link.h"
-Link::Link(char name, char type, int strength, int owner, int movement, bool isVisible, bool isDead, bool isTrojan, bool isAndOne):name{name}, type{type}, strength{strength}, owner{owner}, movement{movement}, isVisible{isVisible}, isDead{isDead}, isTrojan{isTrojan}, isAndOne{isAndOne}{}
+Link::Link(char name, char type, int strength, int owner, int movement, bool isVisible, bool isDead, bool isTrojan, bool isAndOne):name{name}, type{type}, strength{strength}, movement{movement}, owner{owner}, isVisible{isVisible}, isDead{isDead}, isTrojan{isTrojan}, isAndOne{isAndOne}{}
 char Link::getName() {
     return name;
 }
@@ -20,6 +20,9 @@ bool Link::getIsTrojan() {
 }
 bool Link::getIsDead() {
     return isDead;
+}
+bool Link::getIsVisble() {
+    return isVisible;
 }
 void Link::setIsVisble(bool isVisible) {
     this->isVisible = isVisible;
