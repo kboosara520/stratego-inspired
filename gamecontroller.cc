@@ -29,10 +29,10 @@ int GameController::findWinner() {
     return -1;
 }
 
-Move GameController::getMove() {
+Move GameController::getMove(std::istringstream &s) {
     char name;
     char dir;
-    *in >> name >> dir;
+    s >> name >> dir;
     if (!players[turn]->ownsLink(name)) {
         throw IllegalMoveException{"The player does not own the link"};
     }
@@ -42,9 +42,9 @@ Move GameController::getMove() {
     return {name, dir};
 }
 
-char GameController::getOwnLinkName() {
+char GameController::getOwnLinkName(std::istringstream &s) {
     char name;
-    *in >> name;
+    s >> name;
     if (players[turn]->ownsLink(name)) {
         throw IllegalAbilityUseException{"The player does not own the link"};
     }
@@ -54,9 +54,9 @@ char GameController::getOwnLinkName() {
     return name;
 }
 
-Coords GameController::getCoords() {
+Coords GameController::getCoords(std::istringstream &s) {
     int x, y;
-    *in >> y >> x;
+    s >> y >> x;
     if (!(x >= 0 && y >= 0 && x < BOARDSIZE && y < BOARDSIZE)) {
         throw IllegalAbilityUseException{"Coordinates out of bounds"};
     }
@@ -66,11 +66,15 @@ Coords GameController::getCoords() {
 void GameController::runGame() {
     std::string command;
     int winner = -1;
-    while(*in >> command) {
+    std::string line;
+    while(getline(*in, line)) {
+        std::istringstream s{line};
+        s >> command;
+        std::cout << command << std::endl;
         if (command == "move") {
             while (true) {
                 try {
-                    Move move = getMove();
+                    Move move = getMove(s);
                     board->move(move.dir, move.name);
                 } 
                 catch (IllegalMoveException e) {
@@ -90,7 +94,7 @@ void GameController::runGame() {
         }
         else if (command == "ability") {
             int abId;
-            *in >> abId;
+            s >> abId;
             if (abId < 1) {
                 out << "Invalid ability ID (1-5)" << std::endl;
                 in->clear();
@@ -106,7 +110,7 @@ void GameController::runGame() {
             }
             if (abPair.first == POLARIZE) {
                 char name;
-                *in >> name;
+                s >> name;
                 try {
                     board->polarize(name);
                 }
@@ -118,7 +122,7 @@ void GameController::runGame() {
             else if (OWNLINKABILITIES.count(abPair.first) > 0) {
                 char name;
                 try {
-                    name = getOwnLinkName();
+                    name = getOwnLinkName(s);
                 }
                 catch (IllegalAbilityUseException e) {
                     out << e.what() << std::endl;
@@ -140,7 +144,7 @@ void GameController::runGame() {
             }
             else if (OPPLINKABILITIES.count(abPair.first) > 0) {
                 char name;
-                *in >> name;
+                s >> name;
                 if (players[turn]->ownsLink(name)) {
                     out << "Cannot use " << CHAR2NAME.at(abPair.first) << " on your own link" << std::endl;
                     continue;
@@ -163,7 +167,7 @@ void GameController::runGame() {
             else {
                 Coords coords;
                 try {
-                    coords = getCoords();
+                    coords = getCoords(s);
                 }
                 catch (IllegalAbilityUseException e) {
                     out << e.what() << std::endl;
@@ -191,7 +195,7 @@ void GameController::runGame() {
         }
         else if (command == "sequence") {
             std::string fileName;
-            *in >> fileName;
+            s >> fileName;
             file.open(fileName);
             if (file.is_open()) {
                 in = &file;

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 #include "board.h"
@@ -33,9 +34,9 @@ class GameController {
     std::vector<std::unique_ptr<Observer>> observers;
     int turn = 0;
     int findWinner();
-    Move getMove();
-    char getOwnLinkName();
-    Coords getCoords();
+    Move getMove(std::istringstream &s);
+    char getOwnLinkName(std::istringstream &s);
+    Coords getCoords(std::istringstream &s);
   public:
     GameController(
       std::vector<std::string> playerAbilities, 
