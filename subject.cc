@@ -13,10 +13,8 @@ void Subject::detach(Observer *o) {  // Remove from observers
     }
 }
 
-void Subject::notifyObservers(int turn) const {
+void Subject::notifyObservers(int turn, const std::vector<std::pair<int, int>> &changes) const {
     for (auto o : observers) {
-        o->displayBoard(turn);
+        o->displayBoard(turn, changes);
     }
 }
-
-// Subject::~Subject() {}

@@ -27,6 +27,7 @@ class Board: public Subject{
   std::vector<Player *> players; 
   std::unique_ptr<Tile> board[BOARDSIZE][BOARDSIZE]; 
   std::unordered_map< char , std::pair<int, int>> link_map;
+  std::vector<std::pair<int, int>> changes;
 
   // my private methods (helper functions)
   bool isServer(int i, int j);
@@ -46,7 +47,7 @@ class Board: public Subject{
   void download(int player, char linkname); 
   void polarize(char linkname); 
   void scan(char linkname);
-  void update(int player, Link * link); 
+ 
 };
 
 #endif

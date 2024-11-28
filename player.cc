@@ -3,11 +3,11 @@
 Player::Player(int id, std::string abilityList, std::string linkFile): playerId{id} {
     abilities.reserve(abilityList.size());
     std::unordered_map<char, int> tracker;
-    for (int i = 0; i < abilityList.size(); ++i) {
+    for (size_t i = 0; i < abilityList.size(); ++i) {
         if (tracker.count(abilityList[i]) <= 0) tracker[abilityList[i]] = 1;
         else if (tracker[abilityList[i]] == 2) {
             abilities.clear();
-            for (int j = 0; j < defaultAbilities.size(); ++i) {
+            for (size_t j = 0; j < defaultAbilities.size(); ++i) {
                 abilities.emplace_back(defaultAbilities[i], true);
             }
             break;
@@ -107,7 +107,7 @@ void Player::addAndOne(char name) {
 }
 
 std::ostream &operator<<(std::ostream &out, const std::vector<std::pair<char, bool>> &abilities) {
-  for (int i = 0; i < abilities.size(); ++i) {
+  for (size_t i = 0; i < abilities.size(); ++i) {
     out << i + 1 << ": " << CHAR2NAME.at(abilities[i].first) << ", available(not used): ";
     if (abilities[i].second) {
         out << "true";

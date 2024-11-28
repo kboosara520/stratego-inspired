@@ -41,6 +41,7 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, const int &tur
                     this->link_map.emplace('A'+i ,std::pair<int, int>{i, j}); 
                 }
             }
+            changes.emplace_back(std::make_pair(i, j));
         }
     }
     for (auto &player: players) {
@@ -163,6 +164,8 @@ void Board::move(char dir, char link_name){
         return;
     }
 
+    changes.emplace_back(op);
+    changes.emplace_back(p);
 
     // check if the link exists
     // check if it's not a nullptr
@@ -217,6 +220,7 @@ void Board::download(int player, char linkname) {
     if (type == VIRUS) players[player]->setVirus(players[player]->getVirus() + 1);
     else players[player]->setData(players[player]->getData() + 1);
     tile->setLink(nullptr);
+    changes.emplace_back(coords);
 }
 
 void Board::scan(char linkname) {
@@ -253,6 +257,7 @@ void Board::make_firewall(int i, int j){
     }
     
     board[i][j] = std::make_unique<Firewall>(turn, std::move(board[i][j]), players);
+    changes.emplace_back(i, j);
 }
 
 void Board::make_super_firewall(int i, int j){
@@ -267,5 +272,7 @@ void Board::make_super_firewall(int i, int j){
 }
 
 void Board::display(int turn){
-    notifyObservers(turn); 
+    notifyObservers(turn, changes); 
+    changes.clear();
 }
+

@@ -1,6 +1,6 @@
 #include "gamecontroller.h"
 
-GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream *in, std::ostream &out): in{in}, out{out} {
+GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, bool enableGraphics, std::istream *in, std::ostream &out): in{in}, out{out} {
     players.reserve(PLAYERCOUNT);
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         players.emplace_back(std::make_unique<Player>(i, playerAbilities[i], linkFiles[i]));
@@ -8,12 +8,12 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
     }
     board = std::make_unique<Board>(players, turn);
     observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
-
+    if (enableGraphics) observers.emplace_back(std::make_unique<GraphicDisp>(board.get(), rplayers));
 }
 
 int GameController::findWinner() {
     int activeCount = 0;
-    for (int i = 0; i < players.size(); ++i) {
+    for (size_t i = 0; i < players.size(); ++i) {
         if (players[i]->wins()) {
             return i;
         }
@@ -22,7 +22,7 @@ int GameController::findWinner() {
     }
 
     if (activeCount == 1) {
-        for (int i = 0; i < players.size(); ++i) {
+        for (size_t i = 0; i < players.size(); ++i) {
             if (players[i]->isActive()) return i; 
         }
     }
@@ -135,6 +135,7 @@ void GameController::runGame() {
                     out << e.what() << std::endl;
                     continue;
                 }
+                players[turn]->setAbilityCount(players[turn]->getAbilityCount() - 1);
             }
             else if (OWNLINKABILITIES.count(abPair.first) > 0) {
                 char name;
@@ -158,6 +159,7 @@ void GameController::runGame() {
                     default:
                         break;
                 }
+                players[turn]->setAbilityCount(players[turn]->getAbilityCount() - 1);
             }
             else if (OPPLINKABILITIES.count(abPair.first) > 0) {
                 char name;
@@ -180,6 +182,7 @@ void GameController::runGame() {
                     cout << e.what() << std::endl;
                     continue;
                 }
+                players[turn]->setAbilityCount(players[turn]->getAbilityCount() - 1);
             }
             else {
                 Coords coords;
@@ -201,6 +204,7 @@ void GameController::runGame() {
                     out << e.what() << std::endl;
                     continue;
                 }
+                players[turn]->setAbilityCount(players[turn]->getAbilityCount() - 1); 
             }
             players[turn]->useAbility(abId);
             winner = findWinner();

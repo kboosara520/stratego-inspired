@@ -1,11 +1,11 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall  -g
+CXXFLAGS = -std=c++20  -Wall  -g
 EXEC = raiinet
 SRC = $(wildcard *.cc)
 OBJECTS = ${SRC:.cc=.o}
 
 ${EXEC}: ${OBJECTS}
-	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
+	${CXX} ${CXXFLAGS} -lX11 -L/usr/X11/lib -I/usr/X11/include ${OBJECTS} -o ${EXEC}
 
 %.o: %.cc
 	${CXX} ${CXXFLAGS} -c $<

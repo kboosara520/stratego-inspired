@@ -11,6 +11,7 @@
 #include "constants.h"
 #include "player.h"
 #include "textDisp.h"
+#include "graphicDisp.h"
 #include "observer.h"
 #include "illegalmoveexception.h"
 #include "illegalabilityuseexception.h"
@@ -40,7 +41,8 @@ class GameController {
   public:
     GameController(
       std::vector<std::string> playerAbilities, 
-      std::vector<std::string> linkFiles, 
+      std::vector<std::string> linkFiles,
+      bool enableGraphics,
       std::istream *in = &std::cin, 
       std::ostream &out = std::cout
     );

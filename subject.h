@@ -8,18 +8,9 @@ class Subject {
  public:
   void attach( Observer* o );
   void detach( Observer* o );
-  void notifyObservers(int turn) const;
+  void notifyObservers(int turn, const std::vector<std::pair<int, int>> &changes) const;
 
   virtual ~Subject() = default;
 };
 
 #endif
-
-/*
-
-+notifyObservers(): void
-+attach(Observer *o): void
-+detach(Observer *o): void
-+getState(): Player
-
-*/

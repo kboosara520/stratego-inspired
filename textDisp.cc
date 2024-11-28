@@ -7,7 +7,7 @@ TextDisp::TextDisp(Board * board, std::vector<Player *> players): board{board}, 
 TextDisp::~TextDisp(){
     board->detach(this);
 }
-void TextDisp::displayBoard(int turn) {
+void TextDisp::displayBoard(int turn, const std::vector<std::pair<int, int>> &changes) {
     
     // MAY NEED TO CHECK IF ITS A TROJAN, HAVE A DIFFERENT OUTPUT
     // have a method that returns a reference to the links owned by the player
