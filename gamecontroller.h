@@ -17,8 +17,7 @@
 #include "illegalabilityuseexception.h"
 
 struct Move {
-    char name;
-    char dir;
+    char name, dir;
 };
 
 struct Coords {

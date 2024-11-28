@@ -69,10 +69,12 @@ void GameController::runGame() {
     int winner = -1;
     std::string line;
     while(getline(*in, line)) {
+        if (line.size() == 0) continue;
         std::istringstream s{line};
         s >> command;
         if (command == "move") {
             bool fail = false;
+            bool eof = false;
             while (true) {
                 char andOneName = '0';
                 try {
@@ -99,17 +101,24 @@ void GameController::runGame() {
                     }
                     fail = true;
                     out << "Enter another move: " << std::endl;
+                    if (in->eof()) {
+                        eof = true;
+                        break;
+                    }
                     getline(*in, line);
                     continue;
                 }
             }
-            turn = (turn + 1) % PLAYERCOUNT; // updates whose turn it is
-            winner = findWinner();
-            if (winner >= 0) break;
-            board->display(turn);
+            if (!eof) {
+                turn = (turn + 1) % PLAYERCOUNT; // updates whose turn it is
+                winner = findWinner();
+                if (winner >= 0)
+                    break;
+                board->display(turn);
+            }
         }
         else if (command == "abilities") {
-            out << players[turn]->getAbilities() << std::endl;
+            out << players[turn]->getAbilities();
         }
         else if (command == "ability") {
             int abId;

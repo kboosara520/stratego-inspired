@@ -29,19 +29,23 @@ Board::Board(const std::vector<std::unique_ptr<Player>> &players, const int &tur
                 if (j == 0){
                     board[i][j] = std::make_unique<ServerPort>(0 , std::move(board[i][j]), this->players);
                     this->link_map.emplace('a'+i , std::pair<int, int>{i,j+1}); 
+                    changes.emplace_back(std::make_pair(i, j));
                 } else if (j == 7){
                     board[i][j] = std::make_unique<ServerPort>(1 , std::move(board[i][j]), this->players);
                     this->link_map.emplace('A'+i , std::pair<int, int>{i,j - 1}); 
+                    changes.emplace_back(std::make_pair(i, j));
                 }
             } else {
                 // 2. put a link on the link map if it's between 0 and 7 
                 if (j == 0){
                     this->link_map.emplace('a'+i ,std::pair<int, int>{i, j}); 
+                    changes.emplace_back(std::make_pair(i, j));
                 } else if (j == 7){
                     this->link_map.emplace('A'+i ,std::pair<int, int>{i, j}); 
+                    changes.emplace_back(std::make_pair(i, j));
                 }
             }
-            changes.emplace_back(std::make_pair(i, j));
+            
         }
     }
     for (auto &player: players) {
@@ -122,7 +126,7 @@ void Board::check_valid_move(char dir, char link_name){
         case 0:
             if (p.first < 0 || p.first > 7){
                 throw(IllegalMoveException("Player 1 has made an illegal move: exiting the left or right boundaries of the board"));
-            } else if (p.second <= 1 && (p.first == 3 || p.first == 4)){
+            } else if ((p.first == 3 || p.first == 4) && p.second < 1){;
                 throw(IllegalMoveException("Player 1 has made an illegal move: going on it's own server port")); 
             } else if (p.second < 0){
                 throw(IllegalMoveException("Player 1 has made an illegal move: going back to it's own bay")); 
@@ -131,7 +135,7 @@ void Board::check_valid_move(char dir, char link_name){
         case 1:
             if (p.first < 0 || p.first > 7){
                 throw(IllegalMoveException("Player 2 has made an illegal move: exiting the left or right boundaries of the board"));
-            } else if (p.second >= 6 && (p.first == 3 || p.first == 4)){
+            } else if ((p.first == 3 || p.first == 4) && p.second > 6) {
                 throw(IllegalMoveException("Player 2 has made an illegal move: going on it's own server port")); 
             } else if (p.second > 7){
                 throw(IllegalMoveException("Player 2 has made an illegal move: going back to it's own bay"));
@@ -201,8 +205,12 @@ void Board::move(char dir, char link_name){
             if (first->getIsAndOne()) {
                 throw IllegalMoveException{std::string(1, first->getName())};
             }
+            second->setIsDead(true);
         }
-        else download(second->getOwner(), first->getName());
+        else {
+            download(second->getOwner(), first->getName());
+            first->setIsDead(true);
+        }
     }
 }
 

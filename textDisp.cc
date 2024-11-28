@@ -4,9 +4,11 @@ using namespace std;
 TextDisp::TextDisp(Board * board, std::vector<Player *> players): board{board}, players{players}{
     board->attach(this);
 }
-TextDisp::~TextDisp(){
+
+TextDisp::~TextDisp() {
     board->detach(this);
 }
+
 void TextDisp::displayBoard(int turn, const std::vector<std::pair<int, int>> &changes) {
     
     // MAY NEED TO CHECK IF ITS A TROJAN, HAVE A DIFFERENT OUTPUT

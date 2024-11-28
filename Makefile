@@ -1,5 +1,5 @@
-CXX = g++
-CXXFLAGS = -std=c++20  -Wall  -g
+CXX = g++-14.2.0
+CXXFLAGS = -std=c++20 -fmodules-ts -Wall  -g
 EXEC = raiinet
 SRC = $(wildcard *.cc)
 OBJECTS = ${SRC:.cc=.o}

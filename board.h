@@ -47,7 +47,7 @@ class Board: public Subject{
   void download(int player, char linkname); 
   void polarize(char linkname); 
   void scan(char linkname);
- 
+  void update(int player, Link * link); 
 };
 
 #endif
