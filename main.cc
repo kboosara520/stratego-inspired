@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
         else if (arg == "-link2") linkFiles[1] = argv[++i];
         // add extra features
     }
-
-    GameController gc{playerAbilities, linkFiles};
+    std::stringstream from_server;
+    GameController gc{playerAbilities, linkFiles, &from_server};
     gc.runGame();
 }

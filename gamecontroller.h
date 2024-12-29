@@ -26,7 +26,7 @@ struct Coords {
 class GameController {
     std::istream *in;
     std::ifstream file;
-    std::ostream &out;
+    std::ostream &out = std::cout;
     std::vector<std::unique_ptr<Player>> players;
     std::vector<Player *> rplayers;
     std::unique_ptr<Board> board;
@@ -40,8 +40,7 @@ class GameController {
     GameController(
       std::vector<std::string> playerAbilities, 
       std::vector<std::string> linkFiles,
-      std::istream *in = &std::cin, 
-      std::ostream &out = std::cout
+      std::istream *in = &std::cin
     );
     int getTurn();
     void runGame();

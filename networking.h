@@ -1,3 +1,8 @@
+#ifndef NETWORKING_H
+#define NETWORKING_H
+
+#define PORT "3060"
+
 #include <arpa/inet.h> 
 #include <errno.h> 
 #include <netdb.h> 
@@ -22,7 +27,9 @@ struct Data {
     }
 };
 
-void send_message(int sockfd, const std::string &message, int player_id = -1) {
+void sendMessage(int sockfd, const std::string &message, int player_id = -1) {
     Data data{message, player_id};
     send(sockfd, &data, sizeof(Data), 0);
 }
+
+#endif

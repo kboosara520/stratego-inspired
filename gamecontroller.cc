@@ -1,6 +1,6 @@
 #include "gamecontroller.h"
 
-GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream *in, std::ostream &out): in{in}, out{out} {
+GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream *in): in{in} {
     players.reserve(PLAYERCOUNT);
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         players.emplace_back(std::make_unique<Player>(i, playerAbilities[i], linkFiles[i]));
