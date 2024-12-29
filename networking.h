@@ -15,18 +15,16 @@
 #include <thread>
 #include <mutex>
 
-const int MAXMSGLEN = 244;
-const char *ip = "127.0.0.1";
+#define MAXMSGLEN 244
 
+extern const char *ip;
 struct Data {
     int player_id;
     int command;
     char msg[MAXMSGLEN];
     int msg_len;
     Data() {}
-    Data(const std::string &message, int player_id = 0): player_id{player_id}, msg_len{static_cast<int>(message.size())} {
-        strncpy(msg, message.c_str(), sizeof(msg));
-    }
+    Data(const std::string &message, int player_id = 0);
 };
 
 inline void sendMessage(int sockfd, const std::string &message, int player_id = -1) {
@@ -47,6 +45,13 @@ inline void closeSocket(int &sockFd) {
         close(sockFd);
         sockFd = -1;
     }
+}
+
+inline void sigchld_handler(int s) {
+    // waitpid() might overwrite errno, so we save and restore it:
+    int saved_errno = errno;
+    while(waitpid(-1, nullptr, WNOHANG) > 0);
+    errno = saved_errno;
 }
 
 #endif

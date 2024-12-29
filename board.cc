@@ -250,7 +250,7 @@ void Board::polarize(char linkname) {
         throw(IllegalAbilityUseException("Illegal ability use!: Link does not exist")); 
     }
     std::pair<int, int> p = link_map.at(linkname); 
-    if (board[p.first][p.second]->getLink()){
+    if (board[p.first][p.second]->getLink()->getIsDead()){
         throw(IllegalAbilityUseException("Illegal ability use!: Link is dead!"));
     }
     board[p.first][p.second]->getLink()->polarize(); 

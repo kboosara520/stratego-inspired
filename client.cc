@@ -81,6 +81,6 @@ void Client::recvFromServer() {
             std::string message(data.msg, data.msg_len);
             std::cout << "Received message: " << message << std::endl;
         }
-        closeSocket(sockFd);
     }
+    closeSocket(sockFd);
 }

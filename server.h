@@ -17,6 +17,4 @@ class Server {
     void run();
 };
 
-void sigchld_handler(int s);
-
 #endif

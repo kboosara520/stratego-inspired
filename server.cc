@@ -74,6 +74,8 @@ Server::Server(std::stringstream *controllerStream, int &turn): controllerStream
             sizeof(address)
         );
         std::cout << "Player " << (i + 1) << " connected successfully from " << address << std::endl;
+        std::cout << "socket file descriptor: " << sockFd << std::endl;
+        send(sockFd, &i, sizeof(i), 0);
     }
 
     closeSocket(acceptorSocket);
@@ -84,7 +86,7 @@ void Server::run() {
     // start the threads
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         threads.emplace_back(std::thread{&Server::recvFromPlayer, this, std::ref(clientSockets[i])});
-        send(clientSockets[i], &i, sizeof(int), 0);
+        // send(clientSockets[i], &i, sizeof(int), 0);
     }
 
     for (auto &thread: threads) if (thread.joinable()) thread.join();
@@ -117,11 +119,4 @@ void Server::recvFromPlayer(int &sockFd) {
     }
     std::unique_lock<std::mutex> lock{mtx};
     for (auto &sockFd: clientSockets) closeSocket(sockFd);
-}
-
-void sigchld_handler(int s) {
-    // waitpid() might overwrite errno, so we save and restore it:
-    int saved_errno = errno;
-    while(waitpid(-1, nullptr, WNOHANG) > 0);
-    errno = saved_errno;
 }
