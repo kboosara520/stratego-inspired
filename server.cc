@@ -1,6 +1,6 @@
 #include "server.h"
 
-Server::Server(std::stringstream &controllerStream, int &turn): controllerStream{controllerStream}, turn{turn} {
+Server::Server(std::stringstream *controllerStream, int &turn): controllerStream{*controllerStream}, turn{turn} {
     int acceptorSocket;
     addrinfo hints, *servinfo, *p;
     sockaddr_storage connectorAddr;
@@ -79,8 +79,18 @@ Server::Server(std::stringstream &controllerStream, int &turn): controllerStream
     closeSocket(acceptorSocket);
 }
 
+// this method will run in GameController's serverThread
 void Server::run() {
-    // implement;
+    // start the threads
+    for (int i = 0; i < PLAYERCOUNT; ++i) {
+        threads.emplace_back(std::thread{&Server::recvFromPlayer, this, std::ref(clientSockets[i])});
+        send(clientSockets[i], &i, sizeof(int), 0);
+    }
+
+    for (auto &thread: threads) if (thread.joinable()) thread.join();
+
+    // close any sockets that hasn't been closed
+    for (int &sockFd: clientSockets) closeSocket(sockFd);
 }
 
 void Server::recvFromPlayer(int &sockFd) {
@@ -89,10 +99,12 @@ void Server::recvFromPlayer(int &sockFd) {
         int numBytes = recv(sockFd, &data, sizeof(Data), 0);
         if (numBytes == 0) {
             std::cout << "player disconnected" << std::endl;
+            controllerStream.setstate(std::ios::eofbit);
             break;
         }
         else if (numBytes == -1) {
             std::cout << "failed to receive message" << std::endl;
+            controllerStream.setstate(std::ios::eofbit);
             break;
         }
         else if (turn != data.player_id) {
@@ -103,6 +115,8 @@ void Server::recvFromPlayer(int &sockFd) {
             controllerStream << message << std::endl;
         }
     }
+    std::unique_lock<std::mutex> lock{mtx};
+    for (auto &sockFd: clientSockets) closeSocket(sockFd);
 }
 
 void sigchld_handler(int s) {

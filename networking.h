@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <mutex>
 
 const int MAXMSGLEN = 244;
 
@@ -27,7 +28,7 @@ struct Data {
     }
 };
 
-void sendMessage(int sockfd, const std::string &message, int player_id = -1) {
+inline void sendMessage(int sockfd, const std::string &message, int player_id = -1) {
     Data data{message, player_id};
     send(sockfd, &data, sizeof(Data), 0);
 }

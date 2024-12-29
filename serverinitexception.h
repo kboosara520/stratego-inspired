@@ -1,5 +1,5 @@
 #ifndef SERVERINITEXCEPTION_H
-#define SERVERINITEXCPETION_H
+#define SERVERINITEXCEPTION_H
 
 #include <iostream>
 #include <exception>

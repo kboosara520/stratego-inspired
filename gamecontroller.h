@@ -12,6 +12,8 @@
 #include "player.h"
 #include "textDisp.h"
 #include "observer.h"
+#include "server.h"
+#include "serverinitexception.h"
 #include "illegalmoveexception.h"
 #include "illegalabilityuseexception.h"
 
@@ -32,6 +34,8 @@ class GameController {
     std::unique_ptr<Board> board;
     std::vector<std::unique_ptr<Observer>> observers;
     int turn = 0;
+    std::unique_ptr<Server> server;
+    std::thread serverThread;
     int findWinner();
     Move getMove(std::istream &s);
     char getOwnLinkName(std::istream &s);

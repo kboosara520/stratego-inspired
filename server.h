@@ -6,14 +6,15 @@
 #include "serverinitexception.h"
 
 class Server {
-    int &turn;
+    std::mutex mtx;
     std::vector<int> clientSockets;
     std::thread mainServerThread;
     std::vector<std::thread> threads;
     std::stringstream &controllerStream;
+    int &turn;
     void recvFromPlayer(int &sockFd);
   public:
-    Server(std::stringstream &controllerStream, int &turn);
+    Server(std::stringstream *controllerStream, int &turn);
     void run();
 };
 

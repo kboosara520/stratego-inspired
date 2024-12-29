@@ -1,6 +1,7 @@
 #include "gamecontroller.h"
 
-GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream *in): in{in} {
+GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream *in): in{in}, server{nullptr}
+{
     players.reserve(PLAYERCOUNT);
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         players.emplace_back(std::make_unique<Player>(i, playerAbilities[i], linkFiles[i]));
@@ -8,6 +9,21 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
     }
     board = std::make_unique<Board>(players, turn);
     observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
+    std::stringstream *ss = dynamic_cast<std::stringstream *>(in);
+    if (ss) {
+        try {
+            server = std::make_unique<Server>(ss, turn);
+            serverThread = std::thread{&Server::run, server.get()};
+        }
+        catch (const ServerInitException &e) {
+            server = nullptr;
+            std::cout << e.what() << std::endl;
+            in = &std::cin;
+        }
+    }
+    else {
+        in = &std::cin;
+    }
 }
 
 int GameController::findWinner() {
@@ -243,6 +259,16 @@ void GameController::runGame() {
         board->display(turn);
         out << "Player " << winner + 1 << " wins" << std::endl;
     }
+    if (server) {
+        std::cout << "attempting to join the server's thread" << std::endl;
+        if (serverThread.joinable()) {
+            serverThread.join();
+            std::cout << "join successful" << std::endl;
+        }
+        else {
+            std::cout << "the server's thread is not joinable" << std::endl;
+        }
+    } 
 }
 
 int GameController::getTurn() { return turn; }
