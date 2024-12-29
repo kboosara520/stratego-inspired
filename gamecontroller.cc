@@ -1,6 +1,6 @@
 #include "gamecontroller.h"
 
-GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, bool enableGraphics, std::istream *in, std::ostream &out): in{in}, out{out} {
+GameController::GameController(std::vector<std::string> playerAbilities, std::vector<std::string> linkFiles, std::istream *in, std::ostream &out): in{in}, out{out} {
     players.reserve(PLAYERCOUNT);
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         players.emplace_back(std::make_unique<Player>(i, playerAbilities[i], linkFiles[i]));
@@ -8,7 +8,6 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
     }
     board = std::make_unique<Board>(players, turn);
     observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
-    if (enableGraphics) observers.emplace_back(std::make_unique<GraphicDisp>(board.get(), rplayers));
 }
 
 int GameController::findWinner() {

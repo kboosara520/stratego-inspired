@@ -5,3 +5,4 @@ raiinet
 *.zip
 tmp*
 a.out
+.DS_Store
