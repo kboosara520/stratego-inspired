@@ -7,7 +7,7 @@ Server::Server(std::stringstream *controllerStream, int &turn): controllerStream
     socklen_t sinSize;
     struct sigaction sa;
     int yes = 1;
-    char s[INET6_ADDRSTRLEN];
+    char address[INET6_ADDRSTRLEN];
     int rv;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
@@ -70,10 +70,10 @@ Server::Server(std::stringstream *controllerStream, int &turn): controllerStream
         inet_ntop(
             connectorAddr.ss_family, 
             get_in_addr(reinterpret_cast<sockaddr *>(&connectorAddr)),
-            s,
-            sizeof(s)
+            address,
+            sizeof(address)
         );
-        std::cout << "Player " << (i + 1) << " connected successfully from " << s << std::endl;
+        std::cout << "Player " << (i + 1) << " connected successfully from " << address << std::endl;
     }
 
     closeSocket(acceptorSocket);
@@ -123,19 +123,5 @@ void sigchld_handler(int s) {
     // waitpid() might overwrite errno, so we save and restore it:
     int saved_errno = errno;
     while(waitpid(-1, nullptr, WNOHANG) > 0);
-    errno = saved_errno; 
-}
-
-// get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa) {
-    if (sa->sa_family == AF_INET) return &(((struct sockaddr_in*)sa)->sin_addr);
-    return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
-
-void closeSocket(int &sockFd) {
-    if (sockFd != -1) {
-        std::cout << "closing socket " << sockFd << std::endl;
-        close(sockFd);
-        sockFd = -1;
-    }
+    errno = saved_errno;
 }

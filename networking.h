@@ -16,6 +16,7 @@
 #include <mutex>
 
 const int MAXMSGLEN = 244;
+const char *ip = "127.0.0.1";
 
 struct Data {
     int player_id;
@@ -31,6 +32,21 @@ struct Data {
 inline void sendMessage(int sockfd, const std::string &message, int player_id = -1) {
     Data data{message, player_id};
     send(sockfd, &data, sizeof(Data), 0);
+}
+
+inline void *get_in_addr(sockaddr *sa) {
+    if (sa->sa_family == AF_INET) {
+        return &(((sockaddr_in *)sa)->sin_addr);
+    }
+    return &(((sockaddr_in6 *)sa)->sin6_addr);
+}
+
+inline void closeSocket(int &sockFd) {
+    if (sockFd != -1) {
+        std::cout << "closing socket " << sockFd << std::endl;
+        close(sockFd);
+        sockFd = -1;
+    }
 }
 
 #endif

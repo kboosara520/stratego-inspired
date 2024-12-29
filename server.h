@@ -8,7 +8,6 @@
 class Server {
     std::mutex mtx;
     std::vector<int> clientSockets;
-    std::thread mainServerThread;
     std::vector<std::thread> threads;
     std::stringstream &controllerStream;
     int &turn;
@@ -19,7 +18,5 @@ class Server {
 };
 
 void sigchld_handler(int s);
-void *get_in_addr(sockaddr *sa);
-void closeSocket(int &sockFd);
 
 #endif
