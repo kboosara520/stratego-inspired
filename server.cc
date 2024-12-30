@@ -1,6 +1,6 @@
 #include "server.h"
 
-Server::Server(std::stringstream *controllerStream, int &turn): controllerStream{*controllerStream}, turn{turn} {
+Server::Server(std::stringstream *controllerStream, int &turn, std::condition_variable &controllerCv): controllerStream{*controllerStream}, turn{turn}, controllerCv{controllerCv} {
     int acceptorSocket;
     addrinfo hints, *servinfo, *p;
     sockaddr_storage connectorAddr;
@@ -95,6 +95,10 @@ void Server::run() {
     for (int &sockFd: clientSockets) closeSocket(sockFd);
 }
 
+bool Server::dataReady() { return hasData; }
+
+void Server::consumeData() { hasData = false; }
+
 void Server::recvFromPlayer(int &sockFd) {
     while (true) {
         Data data{};
@@ -114,9 +118,16 @@ void Server::recvFromPlayer(int &sockFd) {
         }
         else {
             std::string message(data.msg, data.msg_len);
+            std::unique_lock<std::mutex> toController{mtx};
             controllerStream << message << std::endl;
+            hasData = true;
+            controllerCv.notify_one();
         }
     }
-    std::unique_lock<std::mutex> lock{mtx};
+    // send the server an eof
+    hasData = true;
+    controllerCv.notify_one();
+    
+    std::unique_lock<std::mutex> clearSocketsLock{mtx};
     for (auto &sockFd: clientSockets) closeSocket(sockFd);
 }

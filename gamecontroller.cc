@@ -12,7 +12,7 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
     std::stringstream *ss = dynamic_cast<std::stringstream *>(in);
     if (ss) {
         try {
-            server = std::make_unique<Server>(ss, turn);
+            server = std::make_unique<Server>(ss, turn, cv);
             serverThread = std::thread{&Server::run, server.get()};
         }
         catch (const ServerInitException &e) {
@@ -83,7 +83,7 @@ void GameController::runGame() {
     std::string command;
     int winner = -1;
     std::string line;
-    while(getline(*in, line)) {
+    while(getLineFromInput(line)) {
         if (line.size() == 0) continue;
         std::istringstream s{line};
         s >> command;
@@ -120,7 +120,7 @@ void GameController::runGame() {
                         eof = true;
                         break;
                     }
-                    getline(*in, line);
+                    getLineFromInput(line);
                     continue;
                 }
             }
@@ -269,6 +269,20 @@ void GameController::runGame() {
             std::cout << "the server's thread is not joinable" << std::endl;
         }
     } 
+}
+
+std::istream &GameController::getLineFromInput(std::string &str) {
+    if (!server) {
+        getline(*in, str);
+        return *in;
+    }
+    else {
+        std::unique_lock<std::mutex> waitForInput{controllerMtx};
+        cv.wait(waitForInput, [&] { return server->dataReady(); });
+        getline(*in, str);
+        server->consumeData();
+        return *in;
+    }
 }
 
 int GameController::getTurn() { return turn; }

@@ -11,10 +11,14 @@ class Server {
     std::vector<std::thread> threads;
     std::stringstream &controllerStream;
     int &turn;
+    std::condition_variable &controllerCv;
+    bool hasData = false;
     void recvFromPlayer(int &sockFd);
   public:
-    Server(std::stringstream *controllerStream, int &turn);
+    Server(std::stringstream *controllerStream, int &turn, std::condition_variable &controllerCv);
     void run();
+    bool dataReady();
+    void consumeData();
 };
 
 #endif

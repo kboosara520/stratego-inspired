@@ -36,10 +36,13 @@ class GameController {
     int turn = 0;
     std::unique_ptr<Server> server;
     std::thread serverThread;
+    std::mutex controllerMtx;
+    std::condition_variable cv;
     int findWinner();
     Move getMove(std::istream &s);
     char getOwnLinkName(std::istream &s);
     Coords getCoords(std::istream &s);
+    std::istream &getLineFromInput(std::string &str);
   public:
     GameController(
       std::vector<std::string> playerAbilities, 
