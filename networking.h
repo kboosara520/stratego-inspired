@@ -18,7 +18,7 @@
 #include <thread>
 #include <mutex>
 
-#define MAXMSGLEN 244
+#define MAXMSGLEN 1012
 
 extern const char *ip;
 struct Data {

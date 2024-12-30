@@ -11,7 +11,7 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
     std::stringstream *ss = dynamic_cast<std::stringstream *>(in);
     if (ss) {
         try {
-            server = std::make_unique<Server>(ss, turn, cv);
+            server = std::make_unique<Server>(ss, turn, cv, board.get(), rplayers);
             serverThread = std::thread{&Server::run, server.get()};
         }
         catch (const ServerInitException &e) {
@@ -84,9 +84,12 @@ void GameController::runGame() {
     std::string command;
     int winner = -1;
     std::string line;
-    while(getLineFromInput(line)) {
-        // std::cout << line << std::endl;
-        if (line.size() == 0) continue;
+    while(true) {
+        if (server) {
+            server->sendToPlayer(turn, MESSAGE, "It's your turn. Enter a command:");
+        }
+        if (!getLineFromInput(line)) break;
+        else if (line.size() == 0) continue;
         std::istringstream s{line};
         s >> command;
         if (command == "move") {

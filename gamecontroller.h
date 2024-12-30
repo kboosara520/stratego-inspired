@@ -16,6 +16,7 @@
 #include "serverinitexception.h"
 #include "illegalmoveexception.h"
 #include "illegalabilityuseexception.h"
+#include "clientdisp.h"
 
 struct Move {
     char name, dir;

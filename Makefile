@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall  -g -fsanitize=address
 SERVER_EXEC = raiinet
 CLIENT_EXEC = client
-SERVER_SRC = basetile.cc board.cc decorator.cc firewall.cc gamecontroller.cc illegalabilityuseexception.cc illegalmoveexception.cc link.cc player.cc server.cc serverinitexception.cc serverport.cc subject.cc superfirewall.cc textDisp.cc tile.cc main.cc networking.cc
+SERVER_SRC = basetile.cc board.cc decorator.cc firewall.cc gamecontroller.cc illegalabilityuseexception.cc illegalmoveexception.cc link.cc player.cc server.cc serverinitexception.cc serverport.cc subject.cc superfirewall.cc textDisp.cc tile.cc main.cc networking.cc clientdisp.cc
 SERVER_OBJECTS = ${SERVER_SRC:.cc=.o}
 CLIENT_SRC = client.cc clientinitexception.cc client_main.cc networking.cc
 CLIENT_OBJECTS = ${CLIENT_SRC:.cc=.o}

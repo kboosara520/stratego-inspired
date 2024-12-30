@@ -1,6 +1,12 @@
 #include "server.h"
 
-Server::Server(std::stringstream *controllerStream, int &turn, std::condition_variable &controllerCv): controllerStream{*controllerStream}, turn{turn}, controllerCv{controllerCv} {
+Server::Server(
+    std::stringstream *controllerStream, 
+    int &turn,
+    std::condition_variable &controllerCv,
+    Board *board,
+    std::vector<Player *> players
+): controllerStream{*controllerStream}, turn{turn}, controllerCv{controllerCv}, display{board, players} {
     int acceptorSocket;
     addrinfo hints, *servinfo, *p;
     sockaddr_storage connectorAddr;
@@ -25,7 +31,7 @@ Server::Server(std::stringstream *controllerStream, int &turn, std::condition_va
         if (setsockopt(acceptorSocket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
             throw ServerInitException{"setsockopt"};
         }
-        if (bind(acceptorSocket, p->ai_addr, p->ai_addrlen) == -1) { 
+        if (::bind(acceptorSocket, p->ai_addr, p->ai_addrlen) == -1) { 
             close(acceptorSocket);
             std::cerr << "server: bind" << std::endl;
             continue; 
@@ -120,6 +126,13 @@ void Server::recvFromPlayer(int &sockFd) {
             std::cout << "failed to receive message" << std::endl;
             controllerStream.setstate(std::ios::eofbit);
             break;
+        }
+
+        std::string message(data.msg, data.msg_len);
+        
+        if (message == "board") {
+            sendMessage(sockFd, MESSAGE, display.displayBoard(data.player_id));
+            continue;
         }
         else if (turn != data.player_id) {
             sendMessage(sockFd, MESSAGE,"Not your turn");
