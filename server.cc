@@ -99,6 +99,14 @@ bool Server::dataReady() { return hasData; }
 
 void Server::consumeData() { hasData = false; }
 
+void Server::sendToPlayer(int playerId, int cmd, const std::string &str) {
+    sendMessage(clientSockets[playerId], cmd, str);
+}
+
+void Server::broadcast(int cmd, const std::string &str) {
+    for (int i = 0; i < PLAYERCOUNT; ++i) sendToPlayer(i, cmd, str);
+}
+
 void Server::recvFromPlayer(int &sockFd) {
     while (true) {
         Data data{};
@@ -114,7 +122,7 @@ void Server::recvFromPlayer(int &sockFd) {
             break;
         }
         else if (turn != data.player_id) {
-            sendMessage(sockFd, "Not your turn");
+            sendMessage(sockFd, MESSAGE,"Not your turn");
         }
         else {
             std::string message(data.msg, data.msg_len);

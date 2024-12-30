@@ -8,7 +8,6 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
         rplayers.emplace_back(players[i].get());
     }
     board = std::make_unique<Board>(players, turn);
-    observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
     std::stringstream *ss = dynamic_cast<std::stringstream *>(in);
     if (ss) {
         try {
@@ -19,10 +18,12 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
             server = nullptr;
             std::cout << e.what() << std::endl;
             in = &std::cin;
+            observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
         }
     }
     else {
         in = &std::cin;
+        observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
     }
 }
 
@@ -84,6 +85,7 @@ void GameController::runGame() {
     int winner = -1;
     std::string line;
     while(getLineFromInput(line)) {
+        // std::cout << line << std::endl;
         if (line.size() == 0) continue;
         std::istringstream s{line};
         s >> command;
@@ -235,6 +237,7 @@ void GameController::runGame() {
             if (winner >= 0) break;
         }
         else if (command == "board") {
+            cout << "display board" << endl;
             board->display(turn);
         }
         else if (command == "sequence") {

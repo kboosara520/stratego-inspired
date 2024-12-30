@@ -2,6 +2,8 @@
 #define NETWORKING_H
 
 #define PORT "3060"
+#define BOARD 10
+#define MESSAGE 11
 
 #include <arpa/inet.h> 
 #include <errno.h> 
@@ -10,6 +12,7 @@
 #include <sys/socket.h> 
 #include <unistd.h> 
 
+#include <atomic>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -27,8 +30,9 @@ struct Data {
     Data(const std::string &message, int player_id = 0);
 };
 
-inline void sendMessage(int sockfd, const std::string &message, int player_id = -1) {
+inline void sendMessage(int sockfd, int cmd, const std::string &message, int player_id = -1) {
     Data data{message, player_id};
+    data.command = cmd;
     send(sockfd, &data, sizeof(Data), 0);
 }
 

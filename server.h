@@ -19,6 +19,8 @@ class Server {
     void run();
     bool dataReady();
     void consumeData();
+    void sendToPlayer(int turn, int cmd, const std::string &str);
+    void broadcast(int cmd, const std::string &str);
 };
 
 #endif

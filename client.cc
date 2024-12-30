@@ -35,18 +35,19 @@ Client::Client() {
     );
     std::cout << "client: connected to server, address: " << address << std::endl;
     freeaddrinfo(servinfo);
+    gameRunning = true;
 }
 
 void Client::run() {
     std::thread recvThread{&Client::recvFromServer, this};
     std::string message;
     while (getline(std::cin, message)) {
-        if (message == "exit") break;
+        if (!gameRunning || message == "exit") break;
         else if (message.size() > MAXMSGLEN) {
             std::cout << "length of message cannot exceed " << MAXMSGLEN << " chars" << std::endl;
             continue;
         }
-        sendMessage(sockFd, message, playerId);
+        sendMessage(sockFd, MESSAGE, message, playerId);
     }
     closeSocket(sockFd);
     std::cout << "attempting to join recvThread" << std::endl;
@@ -79,8 +80,10 @@ void Client::recvFromServer() {
         }
         else {
             std::string message(data.msg, data.msg_len);
-            std::cout << "Received message: " << message << std::endl;
+            std::cout << message;
+            if (data.command == MESSAGE) std::cout << std::endl;
         }
     }
     closeSocket(sockFd);
+    gameRunning = false;
 }
