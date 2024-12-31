@@ -74,12 +74,13 @@ Server::Server(
     std::future<void> connectionsStatus = std::async(std::launch::async, checkStatusFunc);
 
     for (int i = 0; i <= getConnectionsTimeout; ++i) {
-        if (connectionsStatus.wait_for(0ms) == std::future_status::ready) { // 0ms non-blocking checks
+        // 0ms non-blocking checks
+        if (connectionsStatus.wait_for(0ms) == std::future_status::ready) { // only returns if a socket gets closed
             clearClientSockets();
             closeSocket(acceptorSocket);
             throw ServerInitException{"player disconnected before the game starts"};
         }
-        else if (waitForConnections.wait_for(0ms) == std::future_status::ready) {
+        else if (waitForConnections.wait_for(0ms) == std::future_status::ready) { // returns if we get 2 active connections
             closeSocket(acceptorSocket);
             stopFlag = true; // stop checking connection status
             connectionsStatus.get();
