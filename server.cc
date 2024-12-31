@@ -73,7 +73,7 @@ Server::Server(
     std::future<void> waitForConnections = std::async(std::launch::async, getConnectionsFunc);
     std::future<void> connectionsStatus = std::async(std::launch::async, checkStatusFunc);
 
-    for (int i = 0; i <= getConnectionsTimeout; ++i) {
+    for (int i = 0; i < getConnectionsTimeout; ++i) {
         // 0ms non-blocking checks
         if (connectionsStatus.wait_for(0ms) == std::future_status::ready) { // only returns if a socket gets closed
             clearClientSockets();
