@@ -4,6 +4,7 @@
 #define PORT "3060"
 #define BOARD 10
 #define MESSAGE 11
+#define ENDGAME 99
 
 #include <arpa/inet.h> 
 #include <errno.h> 

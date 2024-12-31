@@ -6,7 +6,7 @@ Server::Server(
     std::condition_variable &controllerCv,
     Board *board,
     std::vector<Player *> players
-): controllerStream{*controllerStream}, turn{turn}, controllerCv{controllerCv}, display{board, players} {
+): controllerStream{*controllerStream}, turn{turn}, controllerCv{controllerCv}, display{std::make_unique<ClientDisp>(board, players)} {
     int acceptorSocket;
     addrinfo hints, *servinfo, *p;
     sockaddr_storage connectorAddr;
@@ -101,18 +101,6 @@ void Server::run() {
     for (int &sockFd: clientSockets) closeSocket(sockFd);
 }
 
-bool Server::dataReady() { return hasData; }
-
-void Server::consumeData() { hasData = false; }
-
-void Server::sendToPlayer(int playerId, int cmd, const std::string &str) {
-    sendMessage(clientSockets[playerId], cmd, str);
-}
-
-void Server::broadcast(int cmd, const std::string &str) {
-    for (int i = 0; i < PLAYERCOUNT; ++i) sendToPlayer(i, cmd, str);
-}
-
 void Server::recvFromPlayer(int &sockFd) {
     while (true) {
         Data data{};
@@ -131,7 +119,7 @@ void Server::recvFromPlayer(int &sockFd) {
         std::string message(data.msg, data.msg_len);
         
         if (message == "board") {
-            sendMessage(sockFd, MESSAGE, display.displayBoard(data.player_id));
+            sendMessage(sockFd, MESSAGE, display->displayBoard(data.player_id));
             continue;
         }
         else if (turn != data.player_id) {
@@ -151,4 +139,34 @@ void Server::recvFromPlayer(int &sockFd) {
     
     std::unique_lock<std::mutex> clearSocketsLock{mtx};
     for (auto &sockFd: clientSockets) closeSocket(sockFd);
+}
+
+bool Server::dataReady() { return hasData; }
+
+void Server::consumeData() { hasData = false; }
+
+void Server::sendToPlayer(int playerId, int cmd, const std::string &str) {
+    sendMessage(clientSockets[playerId], cmd, str);
+}
+
+void Server::broadcast(int cmd, const std::string &str) {
+    for (int i = 0; i < PLAYERCOUNT; ++i) sendToPlayer(i, cmd, str);
+}
+
+void Server::sendBoardToPlayers() {
+    for (int i = 0; i < PLAYERCOUNT; ++i) {
+        // std::cout << i << std::endl;
+        sendToPlayer(i, MESSAGE, display->displayBoard(i));
+    }
+}
+
+void Server::endGame(int winnderId) {
+    for (int i = 0; i < PLAYERCOUNT; ++i) {
+        if (winnderId == i) {
+            sendMessage(clientSockets[i], ENDGAME, "The game has ended. You win!");
+        }
+        else {
+            sendMessage(clientSockets[i], ENDGAME, "The game has ended. You lose");
+        }
+    }
 }

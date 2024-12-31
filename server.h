@@ -15,7 +15,7 @@ class Server {
     std::stringstream &controllerStream;
     int &turn;
     std::condition_variable &controllerCv;
-    ClientDisp display;
+    std::unique_ptr<ClientDisp> display;
     bool hasData = false;
     void recvFromPlayer(int &sockFd);
   public:
@@ -31,6 +31,8 @@ class Server {
     void consumeData();
     void sendToPlayer(int turn, int cmd, const std::string &str);
     void broadcast(int cmd, const std::string &str);
+    void sendBoardToPlayers();
+    void endGame(int winnerId);
 };
 
 #endif

@@ -74,6 +74,10 @@ void Client::recvFromServer() {
             }
             break;
         }
+        else if (data.command == ENDGAME) {
+            std::cout << "The game has ended" << std::endl;
+            break;
+        }
         else if (playerId < 0) {
             playerId = data.player_id;
             std::cout << "You are Player " << (playerId + 1) << std::endl;

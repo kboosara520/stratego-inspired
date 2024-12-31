@@ -3,6 +3,7 @@
 #include <vector>
 #include "constants.h"
 #include "gamecontroller.h"
+#include "serverinitexception.h"
 
 // for 4 players, turn abilities and links into vectors
 
@@ -20,6 +21,11 @@ int main(int argc, char* argv[]) {
         // add extra features
     }
     std::stringstream from_server;
-    GameController gc{playerAbilities, linkFiles, &from_server};
-    gc.runGame();
+    try {
+        GameController gc{playerAbilities, linkFiles, &from_server};
+        gc.runGame();
+    }
+    catch (const ServerInitException &e) {
+        std::cout << e.what() << std::endl;
+    }
 }

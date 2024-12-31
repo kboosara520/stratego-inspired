@@ -18,6 +18,8 @@
 #include "illegalabilityuseexception.h"
 #include "clientdisp.h"
 
+using namespace std;
+
 struct Move {
     char name, dir;
 };
@@ -27,28 +29,30 @@ struct Coords {
 };
 
 class GameController {
-    std::istream *in;
-    std::ifstream file;
-    std::ostream &out = std::cout;
-    std::vector<std::unique_ptr<Player>> players;
-    std::vector<Player *> rplayers;
-    std::unique_ptr<Board> board;
-    std::vector<std::unique_ptr<Observer>> observers;
+    istream *in;
+    ifstream file;
+    ostream &out = std::cout;
+    vector<std::unique_ptr<Player>> players;
+    vector<Player *> rplayers;
+    unique_ptr<Board> board;
+    vector<std::unique_ptr<Observer>> observers;
     int turn = 0;
-    std::unique_ptr<Server> server;
-    std::thread serverThread;
-    std::mutex controllerMtx;
-    std::condition_variable cv;
+    unique_ptr<Server> server;
+    thread serverThread;
+    mutex controllerMtx;
+    condition_variable cv;
+    stringstream sstream;
     int findWinner();
     Move getMove(std::istream &s);
     char getOwnLinkName(std::istream &s);
     Coords getCoords(std::istream &s);
-    std::istream &getLineFromInput(std::string &str);
+    istream &getLineFromInput(std::string &str);
+    void sendToClient();
   public:
     GameController(
-      std::vector<std::string> playerAbilities, 
-      std::vector<std::string> linkFiles,
-      std::istream *in = &std::cin
+      vector<std::string> playerAbilities, 
+      vector<std::string> linkFiles,
+      istream *in = &std::cin
     );
     int getTurn();
     void runGame();

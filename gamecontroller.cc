@@ -9,21 +9,12 @@ GameController::GameController(std::vector<std::string> playerAbilities, std::ve
     }
     board = std::make_unique<Board>(players, turn);
     std::stringstream *ss = dynamic_cast<std::stringstream *>(in);
-    if (ss) {
-        try {
-            server = std::make_unique<Server>(ss, turn, cv, board.get(), rplayers);
-            serverThread = std::thread{&Server::run, server.get()};
-        }
-        catch (const ServerInitException &e) {
-            server = nullptr;
-            std::cout << e.what() << std::endl;
-            in = &std::cin;
-            observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
-        }
+    try {
+        server = std::make_unique<Server>(ss, turn, cv, board.get(), rplayers);
+        serverThread = std::thread{&Server::run, server.get()};
     }
-    else {
-        in = &std::cin;
-        observers.emplace_back(std::make_unique<TextDisp>(board.get(), rplayers));
+    catch (const ServerInitException &e) {
+        throw;
     }
 }
 
@@ -85,9 +76,7 @@ void GameController::runGame() {
     int winner = -1;
     std::string line;
     while(true) {
-        if (server) {
-            server->sendToPlayer(turn, MESSAGE, "It's your turn. Enter a command:");
-        }
+        server->sendToPlayer(turn, MESSAGE, "It's your turn. Enter a command:");
         if (!getLineFromInput(line)) break;
         else if (line.size() == 0) continue;
         std::istringstream s{line};
@@ -113,14 +102,15 @@ void GameController::runGame() {
                     std::string msg = e.what();
                     if (msg.size() == 1) {
                         board->display(turn);
-                        std::cout << "AND ONE!" << std::endl;
+                        sstream << "AND ONE!" << std::endl;
                         andOneName = msg[0];
                     }
                     else {
-                        out << e.what() << std::endl;
+                        sstream << e.what() << std::endl;
                     }
                     fail = true;
-                    out << "Enter another move: " << std::endl;
+                    sstream << "Enter another move: ";
+                    sendToClient();
                     if (in->eof()) {
                         eof = true;
                         break;
@@ -134,24 +124,27 @@ void GameController::runGame() {
                 winner = findWinner();
                 if (winner >= 0)
                     break;
-                board->display(turn);
+                server->sendBoardToPlayers();
             }
         }
         else if (command == "abilities") {
-            out << players[turn]->getAbilities();
+            sstream << players[turn]->getAbilities();
+            sendToClient();
         }
         else if (command == "ability") {
             int abId;
             s >> abId;
             if (!s || abId < 1) {
-                out << "Invalid ability ID (1-5)" << std::endl;
+                sstream << "Invalid ability ID (1-5)";
+                sendToClient();
                 continue;
             }
             --abId; // get the index of the vector
             auto abilities = players[turn]->getAbilities();
             auto abPair = abilities[abId];
             if (!abPair.second) {
-                out << "Ability has been used" << std::endl;
+                sstream << "Ability has been used";
+                sendToClient();
                 continue;
             }
             if (abPair.first == POLARIZE) {
@@ -161,7 +154,8 @@ void GameController::runGame() {
                     board->polarize(name);
                 }
                 catch (const IllegalAbilityUseException &e) {
-                    out << e.what() << std::endl;
+                    sstream << e.what();
+                    sendToClient();
                     continue;
                 }
                 players[turn]->setAbilityCount(players[turn]->getAbilityCount() - 1);
@@ -172,7 +166,8 @@ void GameController::runGame() {
                     name = getOwnLinkName(s);
                 }
                 catch (const IllegalAbilityUseException &e) {
-                    out << e.what() << std::endl;
+                    sstream << e.what();
+                    sendToClient();
                     continue;
                 }
                 switch (abPair.first) {
@@ -194,7 +189,8 @@ void GameController::runGame() {
                 char name;
                 s >> name;
                 if (players[turn]->ownsLink(name)) {
-                    out << "Cannot use " << CHAR2NAME.at(abPair.first) << " on your own link" << std::endl;
+                    sstream << "Cannot use " << CHAR2NAME.at(abPair.first) << " on your own link";
+                    sendToClient();
                     continue;
                 }
                 try {
@@ -208,7 +204,8 @@ void GameController::runGame() {
                     }
                 }
                 catch (const IllegalAbilityUseException &e) {
-                    cout << e.what() << std::endl;
+                    sstream << e.what();
+                    sendToClient();
                     continue;
                 }
                 players[turn]->setAbilityCount(players[turn]->getAbilityCount() - 1);
@@ -230,7 +227,8 @@ void GameController::runGame() {
                     }
                 }
                 catch (const IllegalAbilityUseException &e) {
-                    out << e.what() << std::endl;
+                    sstream << e.what();
+                    sendToClient();
                     continue;
                 }
                 players[turn]->setAbilityCount(players[turn]->getAbilityCount() - 1); 
@@ -238,10 +236,6 @@ void GameController::runGame() {
             players[turn]->useAbility(abId);
             winner = findWinner();
             if (winner >= 0) break;
-        }
-        else if (command == "board") {
-            cout << "display board" << endl;
-            board->display(turn);
         }
         else if (command == "sequence") {
             std::string fileName;
@@ -251,30 +245,31 @@ void GameController::runGame() {
                 in = &file;
             }
             else {
-                out << "Unable to open the file" << std::endl;
+                sstream << "Unable to open the file";
+                sendToClient();
             }
         }
         else if (command == "quit") {
             break;
         }
         else {
-            out << "Invalid command" << std::endl;
+            sstream << "Invalid command";
+            sendToClient();
         }
     }
     if (winner >= 0) {
         board->display(turn);
         out << "Player " << winner + 1 << " wins" << std::endl;
+        server->endGame(winner);
     }
-    if (server) {
-        std::cout << "attempting to join the server's thread" << std::endl;
-        if (serverThread.joinable()) {
-            serverThread.join();
-            std::cout << "join successful" << std::endl;
-        }
-        else {
-            std::cout << "the server's thread is not joinable" << std::endl;
-        }
-    } 
+    std::cout << "attempting to join the server's thread" << std::endl;
+    if (serverThread.joinable()) {
+        serverThread.join();
+        std::cout << "join successful" << std::endl;
+    }
+    else {
+        std::cout << "the server's thread is not joinable" << std::endl;
+    }
 }
 
 std::istream &GameController::getLineFromInput(std::string &str) {
@@ -292,3 +287,8 @@ std::istream &GameController::getLineFromInput(std::string &str) {
 }
 
 int GameController::getTurn() { return turn; }
+
+void GameController::sendToClient() {
+    server->sendToPlayer(turn, MESSAGE, sstream.str());
+    sstream.str("");
+}

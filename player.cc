@@ -115,7 +115,7 @@ std::ostream &operator<<(std::ostream &out, const std::vector<std::pair<char, bo
     else {
         out << "false";
     }
-    out << std::endl;
+    if (i != abilities.size() - 1) out << std::endl;
   }
   return out;
 }
