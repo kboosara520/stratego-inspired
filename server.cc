@@ -58,7 +58,6 @@ Server::Server(
 
     std::future<void> result = std::async(std::launch::async, &Server::getConnections, this, sinSize, std::ref(connectorAddr), std::ref(acceptorSocket), address);
 
-
     if (result.wait_for(std::chrono::seconds(getConnectionsTimeout)) == std::future_status::timeout) {
         clearClientSockets();
         closeSocket(acceptorSocket);

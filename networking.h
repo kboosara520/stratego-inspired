@@ -19,7 +19,7 @@
 #define CHAT 10
 #define MESSAGE 11
 #define ENDGAME 99
-#define MAXMSGLEN 500
+#define MAXMSGLEN 300
 
 extern const char *ip;
 extern std::mutex mtx;
