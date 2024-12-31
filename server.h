@@ -16,9 +16,11 @@ class Server {
     int &turn;
     std::condition_variable &controllerCv;
     std::unique_ptr<ClientDisp> display;
-    const int getConnectionsTimeout = 20;
+    const int getConnectionsTimeout = 30;
     bool hasData = false;
+    std::atomic<bool> timeout = false;
     void getConnections(socklen_t sinSize, sockaddr_storage &connectorAddr, int &acceptorSocket, char address[]);
+    void checkStatus();
     void recvFromPlayer(int &sockFd);
     void clearClientSockets();
   public:

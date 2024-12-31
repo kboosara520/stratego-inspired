@@ -21,8 +21,9 @@
 #define ENDGAME 99
 #define MAXMSGLEN 300
 
-extern const char *ip;
 extern std::mutex mtx;
+extern const char *ip;
+extern const char ping;
 
 struct Data {
     int player_id;

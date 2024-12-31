@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall  -g
+CXXFLAGS = -std=c++20 -Wall  -g -fsanitize=address
 SERVER_EXEC = raiinet
 CLIENT_EXEC = client
 SERVER_SRC = basetile.cc board.cc clientdisp.cc decorator.cc firewall.cc gamecontroller.cc illegalabilityuseexception.cc illegalmoveexception.cc link.cc networking.cc player.cc server.cc serverinitexception.cc serverport.cc subject.cc superfirewall.cc textDisp.cc tile.cc main.cc

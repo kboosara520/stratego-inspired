@@ -6,7 +6,12 @@ Server::Server(
     std::condition_variable &controllerCv,
     Board *board,
     std::vector<Player *> players
-): controllerStream{*controllerStream}, turn{turn}, controllerCv{controllerCv}, display{std::make_unique<ClientDisp>(board, players)} {
+): 
+    controllerStream{*controllerStream}, 
+    turn{turn}, 
+    controllerCv{controllerCv}, 
+    display{std::make_unique<ClientDisp>(board, players)} 
+{
     int acceptorSocket;
     addrinfo hints, *servinfo, *p;
     sockaddr_storage connectorAddr;
@@ -55,14 +60,37 @@ Server::Server(
     if (sigaction(SIGCHLD, &sa, nullptr) == -1) {
         throw ServerInitException{"sigaction"};
     }
+    
+    using namespace std::chrono_literals;
+    std::function<void()> getConnectionsFunc = std::bind(
+        &Server::getConnections, this, sinSize, 
+        std::ref(connectorAddr), 
+        std::ref(acceptorSocket), address
+    );
+    std::function<void()> checkStatusFunc = std::bind(&Server::checkStatus, this);
 
-    std::future<void> result = std::async(std::launch::async, &Server::getConnections, this, sinSize, std::ref(connectorAddr), std::ref(acceptorSocket), address);
+    signal(SIGPIPE, SIG_IGN);
+    std::future<void> waitForConnections = std::async(std::launch::async, getConnectionsFunc);
+    std::future<void> connectionsStatus = std::async(std::launch::async, checkStatusFunc);
 
-    if (result.wait_for(std::chrono::seconds(getConnectionsTimeout)) == std::future_status::timeout) {
-        clearClientSockets();
-        closeSocket(acceptorSocket);
-        throw ServerInitException("timeout while getting connections (" + std::to_string(getConnectionsTimeout) + "s)");
+    for (int i = 0; i <= getConnectionsTimeout; ++i) {
+        if (connectionsStatus.wait_for(0ms) == std::future_status::ready) {
+            clearClientSockets();
+            closeSocket(acceptorSocket);
+            throw ServerInitException{"player disconnected before the game starts"};
+        }
+        else if (waitForConnections.wait_for(0ms) == std::future_status::ready) {
+            closeSocket(acceptorSocket);
+            return;
+        }
+        std::this_thread::sleep_for(1s);
     }
+    // timeout
+    clearClientSockets();
+    closeSocket(acceptorSocket);
+    timeout = true;
+    connectionsStatus.get();
+    throw ServerInitException{"timeout while getting connections (" + std::to_string(getConnectionsTimeout) + "s)"};
 }
 
 void Server::clearClientSockets() {
@@ -96,6 +124,20 @@ void Server::getConnections(socklen_t sinSize, sockaddr_storage &connectorAddr, 
         send(sockFd, &i, sizeof(i), 0);
     }
     closeSocket(acceptorSocket);
+}
+
+void Server::checkStatus() {
+    while (true) {
+        for (int sockFd: clientSockets) {
+            int numBytes = send(sockFd, &ping, sizeof(char), 0);
+            if (numBytes <= 0) {
+                if (errno != EBADF && errno != EPIPE) std::cout << "error code: " << errno << std::endl;
+                return;
+            }
+        }
+        if (timeout) return;
+        std::this_thread::sleep_for(1s);
+    }
 }
 
 void Server::recvFromPlayer(int &sockFd) {

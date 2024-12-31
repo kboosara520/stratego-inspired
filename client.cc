@@ -86,6 +86,9 @@ void Client::recvFromServer() {
             }
             break;
         }
+        else if (numBytes == 1 && data.player_id == ping) {
+            continue; // just a ping from the server
+        }
         else if (data.command == ENDGAME) {
             std::cout << "The game has ended" << std::endl;
             break;

@@ -1,7 +1,8 @@
 #include "networking.h"
 
-const char *ip = "127.0.0.1";
 std::mutex mtx;
+const char *ip = "127.0.0.1";
+const char ping = 'p';
 
 Data::Data(const std::string &message, int player_id): player_id{player_id}, msg_len{static_cast<int>(message.size())} {
     strncpy(msg, message.c_str(), sizeof(msg));
