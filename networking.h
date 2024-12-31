@@ -1,11 +1,6 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
-#define PORT "3060"
-#define BOARD 10
-#define MESSAGE 11
-#define ENDGAME 99
-
 #include <arpa/inet.h> 
 #include <errno.h> 
 #include <netdb.h> 
@@ -18,10 +13,17 @@
 #include <string>
 #include <thread>
 #include <mutex>
+#include <future>
 
-#define MAXMSGLEN 1012
+#define PORT "3060"
+#define CHAT 10
+#define MESSAGE 11
+#define ENDGAME 99
+#define MAXMSGLEN 500
 
 extern const char *ip;
+extern std::mutex mtx;
+
 struct Data {
     int player_id;
     int command;
@@ -31,32 +33,9 @@ struct Data {
     Data(const std::string &message, int player_id = 0);
 };
 
-inline void sendMessage(int sockfd, int cmd, const std::string &message, int player_id = -1) {
-    Data data{message, player_id};
-    data.command = cmd;
-    send(sockfd, &data, sizeof(Data), 0);
-}
-
-inline void *get_in_addr(sockaddr *sa) {
-    if (sa->sa_family == AF_INET) {
-        return &(((sockaddr_in *)sa)->sin_addr);
-    }
-    return &(((sockaddr_in6 *)sa)->sin6_addr);
-}
-
-inline void closeSocket(int &sockFd) {
-    if (sockFd != -1) {
-        std::cout << "closing socket " << sockFd << std::endl;
-        close(sockFd);
-        sockFd = -1;
-    }
-}
-
-inline void sigchld_handler(int s) {
-    // waitpid() might overwrite errno, so we save and restore it:
-    int saved_errno = errno;
-    while(waitpid(-1, nullptr, WNOHANG) > 0);
-    errno = saved_errno;
-}
+void closeSocket(int &sockFd);
+void sendMessage(int sockfd, int cmd, const std::string &message, int player_id = -1);
+void *get_in_addr(sockaddr *sa);
+void sigchld_handler(int s);
 
 #endif

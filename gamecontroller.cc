@@ -262,13 +262,13 @@ void GameController::runGame() {
         out << "Player " << winner + 1 << " wins" << std::endl;
         server->endGame(winner);
     }
-    std::cout << "attempting to join the server's thread" << std::endl;
+
     if (serverThread.joinable()) {
         serverThread.join();
-        std::cout << "join successful" << std::endl;
+        std::cout << "joined server's thread" << std::endl;
     }
     else {
-        std::cout << "the server's thread is not joinable" << std::endl;
+        std::cout << "server thread is not joinable" << std::endl;
     }
 }
 

@@ -56,9 +56,23 @@ Server::Server(
         throw ServerInitException{"sigaction"};
     }
 
+    std::future<void> result = std::async(std::launch::async, &Server::getConnections, this, sinSize, std::ref(connectorAddr), std::ref(acceptorSocket), address);
+
+
+    if (result.wait_for(std::chrono::seconds(getConnectionsTimeout)) == std::future_status::timeout) {
+        clearClientSockets();
+        closeSocket(acceptorSocket);
+        throw ServerInitException("timeout while getting connections (" + std::to_string(getConnectionsTimeout) + "s)");
+    }
+}
+
+void Server::clearClientSockets() {
+    for (int &sockFd: clientSockets) closeSocket(sockFd);
+}
+
+void Server::getConnections(socklen_t sinSize, sockaddr_storage &connectorAddr, int &acceptorSocket, char address[]) {
     std::cout << "server: waiting for 2 connections..." << std::endl;
     clientSockets.reserve(2);
-
     for (int i = 0; i < PLAYERCOUNT; ++i) {
         sinSize = sizeof(connectorAddr);
         int sockFd = accept(
@@ -77,28 +91,12 @@ Server::Server(
             connectorAddr.ss_family, 
             get_in_addr(reinterpret_cast<sockaddr *>(&connectorAddr)),
             address,
-            sizeof(address)
+            INET6_ADDRSTRLEN
         );
         std::cout << "Player " << (i + 1) << " connected successfully from " << address << std::endl;
-        std::cout << "socket file descriptor: " << sockFd << std::endl;
         send(sockFd, &i, sizeof(i), 0);
     }
-
     closeSocket(acceptorSocket);
-}
-
-// this method will run in GameController's serverThread
-void Server::run() {
-    // start the threads
-    for (int i = 0; i < PLAYERCOUNT; ++i) {
-        threads.emplace_back(std::thread{&Server::recvFromPlayer, this, std::ref(clientSockets[i])});
-        // send(clientSockets[i], &i, sizeof(int), 0);
-    }
-
-    for (auto &thread: threads) if (thread.joinable()) thread.join();
-
-    // close any sockets that hasn't been closed
-    for (int &sockFd: clientSockets) closeSocket(sockFd);
 }
 
 void Server::recvFromPlayer(int &sockFd) {
@@ -111,14 +109,22 @@ void Server::recvFromPlayer(int &sockFd) {
             break;
         }
         else if (numBytes == -1) {
-            std::cout << "failed to receive message" << std::endl;
+            if (errno != EBADF) {
+                std::cout << "Something went wrong, errno: " << errno << std::endl;
+            }
             controllerStream.setstate(std::ios::eofbit);
             break;
         }
 
         std::string message(data.msg, data.msg_len);
-        
-        if (message == "board") {
+
+        if (data.command == CHAT) {
+            for (int i = 0; i < PLAYERCOUNT; i++) {
+                if (i != data.player_id) sendMessage(clientSockets[i], CHAT, message);
+            }
+            continue;
+        }
+        else if (message == "board") {
             sendMessage(sockFd, MESSAGE, display->displayBoard(data.player_id));
             continue;
         }
@@ -126,7 +132,6 @@ void Server::recvFromPlayer(int &sockFd) {
             sendMessage(sockFd, MESSAGE,"Not your turn");
         }
         else {
-            std::string message(data.msg, data.msg_len);
             std::unique_lock<std::mutex> toController{mtx};
             controllerStream << message << std::endl;
             hasData = true;
@@ -139,6 +144,19 @@ void Server::recvFromPlayer(int &sockFd) {
     
     std::unique_lock<std::mutex> clearSocketsLock{mtx};
     for (auto &sockFd: clientSockets) closeSocket(sockFd);
+}
+
+// this method will run in GameController's serverThread
+void Server::run() {
+    // start the threads
+    for (int i = 0; i < PLAYERCOUNT; ++i) {
+        threads.emplace_back(std::thread{&Server::recvFromPlayer, this, std::ref(clientSockets[i])});
+    }
+
+    for (auto &thread: threads) if (thread.joinable()) thread.join();
+    std::cout << "disconnected everyone from the server" << std::endl;
+    // close any sockets that hasn't been closed
+    for (int &sockFd: clientSockets) closeSocket(sockFd);
 }
 
 bool Server::dataReady() { return hasData; }

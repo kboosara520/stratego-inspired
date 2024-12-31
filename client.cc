@@ -43,20 +43,32 @@ void Client::run() {
     std::string message;
     while (getline(std::cin, message)) {
         if (!gameRunning || message == "exit") break;
+        else if (message.size() == 0) continue;
         else if (message.size() > MAXMSGLEN) {
             std::cout << "length of message cannot exceed " << MAXMSGLEN << " chars" << std::endl;
             continue;
         }
-        sendMessage(sockFd, MESSAGE, message, playerId);
+        else if (message[0] == '/') {
+            message.erase(message.begin());
+            if (message.size() == 0) {
+                std::cout << "cannot send an empty message" << std::endl;
+            }
+            else {
+                message = "Player " + std::to_string(playerId + 1) + " says: " + message;
+                sendMessage(sockFd, CHAT, message, playerId);
+            }
+        }
+        else {
+            sendMessage(sockFd, MESSAGE, message, playerId);
+        }
     }
     closeSocket(sockFd);
-    std::cout << "attempting to join recvThread" << std::endl;
     if (recvThread.joinable()) {
         recvThread.join();
-        std::cout << "recvThread joined successfully" << std::endl;
+        std::cout << "receiving thread joined" << std::endl;
     }
     else {
-        std::cout << "recvThread is not joinable" << std::endl;
+        std::cout << "receiving thread is not joinable" << std::endl;
     }
 }
 
@@ -84,8 +96,7 @@ void Client::recvFromServer() {
         }
         else {
             std::string message(data.msg, data.msg_len);
-            std::cout << message;
-            if (data.command == MESSAGE) std::cout << std::endl;
+            std::cout << message << std::endl;
         }
     }
     closeSocket(sockFd);
