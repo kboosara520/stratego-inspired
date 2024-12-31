@@ -69,26 +69,28 @@ Server::Server(
     );
     std::function<void()> checkStatusFunc = std::bind(&Server::checkStatus, this);
 
-    signal(SIGPIPE, SIG_IGN);
+    signal(SIGPIPE, SIG_IGN); // ignore SIGPIPE
     std::future<void> waitForConnections = std::async(std::launch::async, getConnectionsFunc);
     std::future<void> connectionsStatus = std::async(std::launch::async, checkStatusFunc);
 
     for (int i = 0; i <= getConnectionsTimeout; ++i) {
-        if (connectionsStatus.wait_for(0ms) == std::future_status::ready) {
+        if (connectionsStatus.wait_for(0ms) == std::future_status::ready) { // 0ms non-blocking checks
             clearClientSockets();
             closeSocket(acceptorSocket);
             throw ServerInitException{"player disconnected before the game starts"};
         }
         else if (waitForConnections.wait_for(0ms) == std::future_status::ready) {
             closeSocket(acceptorSocket);
+            stopFlag = true; // stop checking connection status
+            connectionsStatus.get();
             return;
         }
         std::this_thread::sleep_for(1s);
     }
     // timeout
+    stopFlag = true;
     clearClientSockets();
     closeSocket(acceptorSocket);
-    timeout = true;
     connectionsStatus.get();
     throw ServerInitException{"timeout while getting connections (" + std::to_string(getConnectionsTimeout) + "s)"};
 }
@@ -135,7 +137,7 @@ void Server::checkStatus() {
                 return;
             }
         }
-        if (timeout) return;
+        if (stopFlag) return;
         std::this_thread::sleep_for(1s);
     }
 }

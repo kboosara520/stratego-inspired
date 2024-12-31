@@ -18,7 +18,7 @@ class Server {
     std::unique_ptr<ClientDisp> display;
     const int getConnectionsTimeout = 30;
     bool hasData = false;
-    std::atomic<bool> timeout = false;
+    std::atomic<bool> stopFlag = false;
     void getConnections(socklen_t sinSize, sockaddr_storage &connectorAddr, int &acceptorSocket, char address[]);
     void checkStatus();
     void recvFromPlayer(int &sockFd);
